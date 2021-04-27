@@ -1,15 +1,21 @@
-import { add } from './service/service';
+import { login } from './services/auth/auth-service';
 
 export class PracteraSDK {
 
-  protected environment: string;
+  // Actual API URL pass to the package object.
+  protected apiUrl: string;
 
-  constructor(environment: string) {
-    this.environment = environment;
+  constructor(apiUrl: string) {
+    this.apiUrl = apiUrl;
   }
 
-  addTwoNumbers(firstNum: any, secondNum: any): number {
-    return add(firstNum, secondNum);
+  /**
+   * this method will call login api to log in user with user credentials.
+   * @param data json object - login credentials
+   * @returns promise
+   */
+  login(data: any): any {
+    return login(this.apiUrl, data);
   }
 
 }
