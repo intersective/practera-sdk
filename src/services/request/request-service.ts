@@ -27,12 +27,11 @@ function createRequestConfig(httpOptions: any) : AxiosRequestConfig {
   if (!_.has(httpOptions, 'headers')) {
     httpOptions.params = '';
   }
-  const config = {
+  return {
     timeout: 20000,
     headers: Object.assign({'Content-Type': 'application/json'}, httpOptions.headers),
     params: httpOptions.params
   };
-  return config;
 }
 
 /**
@@ -49,7 +48,7 @@ export function makeGetApiCall(endpoint: string, httpOptions?: any): Promise<any
 /**
  * Make post request to API using Axios.
  * @param endpoint string - Full url of the API endpoint
- * @param data Json object - 
+ * @param data Json object - data need to pass in the request body
  * @param httpOptions Json object - Contains headers and URL parameters
  * @returns Promise
  */

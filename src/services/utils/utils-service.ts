@@ -4,7 +4,7 @@
  * @param endpoint string - Api endpoint
  * @returns string - Full API URL.
  */
-export function createFullApiUrl(apiUrl: string, endPoint: string): any {
+export function createFullApiUrl(apiUrl: string, endPoint: string): string {
   if (!apiUrl || !endPoint) {
     console.error('apiUrl and endPoint is required');
   }
