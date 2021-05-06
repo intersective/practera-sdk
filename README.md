@@ -12,7 +12,7 @@ npm install @practera/practera-sdk
 
 ### TypeScript
 
-import the component in the module file that you need to use it.
+import the skd to the TypeScript file that you need to use it.
 
 ``` ts
 import { PracteraSDK } from '@practera/practera-sdk';
