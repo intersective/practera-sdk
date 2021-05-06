@@ -15,3 +15,18 @@ describe('When testing login()', (): void => {
     expect(loginService.login).toHaveBeenCalledWith('testAPI.com', data);
   });
 });
+
+describe('When testing login()', (): void => {
+  it('should call login service with correct data', (): void => {
+    spyOn(loginService,'forgotPassword').and.returnValue(new Promise<void>((resolve, reject) => {
+      resolve();
+    }));
+    const data = {
+      email: 'abcd@test.com',
+      globalLoginUrl: 'https://login.practera.com'
+    };
+    const sdk = new PracteraSDK('testAPI.com');
+    sdk.forgotPassword(data);
+    expect(loginService.forgotPassword).toHaveBeenCalledWith('testAPI.com', data);
+  });
+});

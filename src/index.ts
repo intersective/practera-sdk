@@ -31,7 +31,7 @@ export class PracteraSDK {
   * }
   * @returns promise
   */
-  forgotpassword(data: any): any {
+  forgotPassword(data: any): any {
     return forgotPassword(this.apiUrl, data);
   }
 
