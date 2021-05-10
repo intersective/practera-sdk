@@ -1,4 +1,4 @@
-import { makePostApiCall } from '../request/request-service';
+import { makePostApiCall, makePutApiCall } from '../request/request-service';
 import { createFullApiUrl } from '../utils/utils-service';
 
 /**
@@ -30,6 +30,10 @@ function createResetDirectLinks(globalLoginUrl: string): any {
  * This method will call login api with passed data and will return promise
  * @param apiUrl string - actual API URL.
  * @param body json object - login credentials
+ * {
+ *  email: 'abcd@gmail.com',
+ *  password: '1234'
+ * }
  * @returns promise
  */
 export function login(apiUrl: string, body: any): any {
@@ -56,4 +60,25 @@ export function forgotPassword(apiUrl: string, data: any): any {
     directLink: directLinks.direct
   }
   return makePostApiCall(fullUrl, body);
+}
+
+/**
+ * This method will call reset password api with passed data and will return promise
+ * @param apiUrl string - actual API URL.
+ * @param data json object - user new password and apikey
+ * {
+ *  password: 'abcdf',
+ *  apiKey: 'asdfghghjkl12'
+ * }
+ * @returns promise
+ */
+export function resetPassword(apiUrl: string, data: any): any {
+  const fullUrl = createFullApiUrl(apiUrl, api.resetPassword);
+  return makePutApiCall(fullUrl, {
+    password: data.password
+  }, {
+    headers: {
+      apikey: data.apiKey
+    }
+  });
 }

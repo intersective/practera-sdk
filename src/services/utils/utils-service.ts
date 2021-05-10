@@ -8,5 +8,5 @@ export function createFullApiUrl(apiUrl: string, endPoint: string): string {
   if (!apiUrl || !endPoint) {
     console.error('apiUrl and endPoint is required');
   }
-  return `${apiUrl}/${endPoint}`;
+  return `${apiUrl}${endPoint}`;
 }
