@@ -26,7 +26,7 @@ const practeraSDK = new PracteraSDK('apiUrl');
 
 | Property name | Description |
 | :------------ | :----------- |
-| apiUrl | When SDK initialising need to pass the base API URL SDK need call. for ex:- `https://api.test.practera.com`|
+| apiUrl | When SDK initialising need to pass the base API URL SDK need call. for ex:- `https://api.test.practera.com/`|
 
 ## servicers
 
@@ -73,6 +73,30 @@ let data = {
 practeraSDK.forgotpassword(data).then(
     (response) => {
         console.log('Password reset email send to provided email');
+    },
+    (error) => {
+        console.error('error');
+    }
+);
+```
+
+### Reset password
+
+Reset password service is calling `/user` endpoint of the API URL passed when SDK init. To call reset password service need to pass user new password and apiKey getting from email link.
+
+```ts
+import { PracteraSDK } from '@practera/practera-sdk';
+
+const practeraSDK = new PracteraSDK('apiUrl');
+
+let data = {
+   password: '123456',
+   apiKey: 'xzcv345'
+}
+
+practeraSDK.resetPassword(data).then(
+    (response) => {
+        console.log('Password change successfull');
     },
     (error) => {
         console.error('error');

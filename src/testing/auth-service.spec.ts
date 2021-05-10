@@ -1,4 +1,4 @@
-import { login, forgotPassword } from '../services/auth/auth-service';
+import { login, forgotPassword, resetPassword } from '../services/auth/auth-service';
 import * as requestService from '../services/request/request-service';
 import * as utilService from '../services/utils/utils-service';
 
@@ -12,8 +12,8 @@ describe('When testing login()', (): void => {
       userName: 'testUser',
       password: '12345'
     };
-    login('testAPI.com', data);
-    expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com', 'login');
+    login('testAPI.com/', data);
+    expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com/', 'login');
     expect(requestService.makePostApiCall).toHaveBeenCalledWith('testAPI.com/login', data);
   });
 });
@@ -33,8 +33,30 @@ describe('When testing forgotPassword()', (): void => {
       directLink: 'https://login.practera.com?action=direct&apiKey=',
       resetLink: 'https://login.practera.com?action=resetpassword&apiKey='
     }
-    forgotPassword('testAPI.com', data);
-    expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com', 'forgotPassword');
+    forgotPassword('testAPI.com/', data);
+    expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com/', 'forgotPassword');
     expect(requestService.makePostApiCall).toHaveBeenCalledWith('testAPI.com/forgotPassword', requestData);
+  });
+});
+
+describe('When testing resetPassword()', (): void => {
+  it('should call request service with full API URL and data', (): void => {
+    spyOn(utilService,'createFullApiUrl').and.returnValue('testAPI.com/user');
+    spyOn(requestService,'makePutApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
+      resolve();
+    }));
+    const data = {
+      password: '1234',
+      apiKey: 'axcd'
+    };
+    resetPassword('testAPI.com/', data);
+    expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com/', 'user');
+    expect(requestService.makePutApiCall).toHaveBeenCalledWith('testAPI.com/user', {
+      password: '1234'
+    }, {
+      headers: {
+        apikey: data.apiKey
+      }
+    });
   });
 });

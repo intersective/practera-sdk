@@ -56,3 +56,15 @@ export function makePostApiCall(endpoint: string, data: any, httpOptions?: any):
   const requestConfig = createRequestConfig(httpOptions);
   return Axios.post(endpoint, data, requestConfig);
 }
+
+/**
+ * Make put request to API using Axios.
+ * @param endpoint string - Full url of the API endpoint
+ * @param data Json object - data need to pass in the request body
+ * @param httpOptions Json object - Contains headers and URL parameters
+ * @returns Promise
+ */
+export function makePutApiCall(endpoint: string, data: any, httpOptions?: any): Promise<any> {
+  const requestConfig = createRequestConfig(httpOptions);
+  return Axios.put(endpoint, data, requestConfig);
+}
