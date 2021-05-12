@@ -1,5 +1,15 @@
 import { makePostApiCall, makePutApiCall } from '../request/request-service';
 import { createFullApiUrl } from '../utils/utils-service';
+import _ from "lodash";
+
+interface MFARigisterParams {
+  countryCode: string;
+  number: string;
+}
+
+interface MFAVirifyParams {
+  code: string;
+}
 
 /**
  * api
@@ -65,20 +75,87 @@ export function forgotPassword(apiUrl: string, data: any): any {
 /**
  * This method will call reset password api with passed data and will return promise
  * @param apiUrl string - actual API URL.
- * @param data json object - user new password and apikey
+ * @param apiKey string - user apikey get when user login to the system
+ * @param data json object - user new password
  * {
- *  password: 'abcdf',
- *  apiKey: 'asdfghghjkl12'
+ *  password: 'abcdf'
  * }
  * @returns promise
  */
-export function resetPassword(apiUrl: string, data: any): any {
+export function resetPassword(apiUrl: string, apiKey: string, body: any): any {
   const fullUrl = createFullApiUrl(apiUrl, api.resetPassword);
-  return makePutApiCall(fullUrl, {
-    password: data.password
-  }, {
+  return makePutApiCall(fullUrl, body, {
     headers: {
-      apikey: data.apiKey
+      apiKey: apiKey
+    }
+  });
+}
+
+/**
+ * This method will call mfa sms api to send sms to a user.
+ * @param apiUrl string - actual API URL.
+ * @param apiKey string - user apikey get when user login to the system
+ * @returns promise
+ */
+export function mfaSMS(apiUrl: string, apiKey: string): any {
+  if (_.isEmpty(apiUrl) || _.isEmpty(apiKey)) {
+    throw new Error("API Url and API key can not be empty");
+  }
+  const fullUrl = createFullApiUrl(apiUrl, api.mfaSMS);
+  return makePostApiCall(fullUrl, {}, {
+    headers: {
+      apiKey: apiKey
+    }
+  });
+}
+
+/**
+ * This method will call mfa register api to register user phone number in the system.
+ * @param apiUrl string - actual API URL.
+ * @param apiKey string - user apikey get when user login to the system
+ * @param data json object - country code of the mobile number, real mobile number without country code
+ * {
+ *  countryCode: '+94',
+ *  number: '651684654'
+ * }
+ * @returns promise
+ */
+export function mfaRegister(apiUrl: string, apiKey: string, body: MFARigisterParams): any {
+  if (_.isEmpty(apiUrl) || _.isEmpty(apiKey)) {
+    throw new Error("API Url and API key can not be empty");
+  }
+  if (_.isEmpty(body.countryCode) || _.isEmpty(body.number)) {
+    throw new Error("Country code and phone number can not be empty");
+  }
+  const fullUrl = createFullApiUrl(apiUrl, api.mfaRegister);
+  return makePostApiCall(fullUrl, body, {
+    headers: {
+      apiKey: apiKey
+    }
+  });
+}
+
+/**
+ * This method will call mfa verify api to verify the codes sending by sms to user.
+ * @param apiUrl string - actual API URL.
+ * @param apiKey string - user apikey get when user login to the system
+ * @param data json object - code user type, that came as sms
+ * {
+ *  code: '550245'
+ * }
+ * @returns promise
+ */
+export function mfaVerify(apiUrl: string, apiKey: string, body: MFAVirifyParams): Promise<any> {
+  if (_.isEmpty(apiUrl) || _.isEmpty(apiKey)) {
+    throw new Error("API Url and API key can not be empty");
+  }
+  if (_.isEmpty(body.code)) {
+    throw new Error("Verification code can not be empty");
+  }
+  const fullUrl = createFullApiUrl(apiUrl, api.mfaVerify);
+  return makePostApiCall(fullUrl, body, {
+    headers: {
+      apiKey: apiKey
     }
   });
 }
