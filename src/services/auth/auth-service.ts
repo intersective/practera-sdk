@@ -29,6 +29,8 @@ const api = {
   getStack: 'stack'
 };
 
+const apiUrlApiKeyError = 'API Url and API key can not be empty';
+
 function createResetDirectLinks(globalLoginUrl: string): any {
   return {
     reset: `${globalLoginUrl}?action=resetpassword&apiKey=`,
@@ -99,7 +101,7 @@ export function resetPassword(apiUrl: string, apiKey: string, body: any): any {
  */
 export function mfaSMS(apiUrl: string, apiKey: string): any {
   if (_.isEmpty(apiUrl) || _.isEmpty(apiKey)) {
-    throw new Error("API Url and API key can not be empty");
+    throw new Error(apiUrlApiKeyError);
   }
   const fullUrl = createFullApiUrl(apiUrl, api.mfaSMS);
   return makePostApiCall(fullUrl, {}, {
@@ -122,7 +124,7 @@ export function mfaSMS(apiUrl: string, apiKey: string): any {
  */
 export function mfaRegister(apiUrl: string, apiKey: string, body: MFARigisterParams): any {
   if (_.isEmpty(apiUrl) || _.isEmpty(apiKey)) {
-    throw new Error("API Url and API key can not be empty");
+    throw new Error(apiUrlApiKeyError);
   }
   if (_.isEmpty(body.countryCode) || _.isEmpty(body.number)) {
     throw new Error("Country code and phone number can not be empty");
@@ -147,7 +149,7 @@ export function mfaRegister(apiUrl: string, apiKey: string, body: MFARigisterPar
  */
 export function mfaVerify(apiUrl: string, apiKey: string, body: MFAVirifyParams): Promise<any> {
   if (_.isEmpty(apiUrl) || _.isEmpty(apiKey)) {
-    throw new Error("API Url and API key can not be empty");
+    throw new Error(apiUrlApiKeyError);
   }
   if (_.isEmpty(body.code)) {
     throw new Error("Verification code can not be empty");
