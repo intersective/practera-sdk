@@ -103,3 +103,75 @@ practeraSDK.resetPassword(data).then(
     }
 );
 ```
+
+### MFA Register
+
+MFA Register service is calling `/mfa/register` endpoint of the API URL passed when SDK init. To call MFA Register service need to pass country code of the phone number, actual phone number and user apiKey.
+
+```ts
+import { PracteraSDK } from '@practera/practera-sdk';
+
+const practeraSDK = new PracteraSDK('apiUrl');
+
+let data = {
+   countryCode: '+94',
+   number: '123456',
+   apiKey: 'xzcv345'
+}
+
+practeraSDK.mfaRegister(data).then(
+    (response) => {
+        console.log('Phone number registration successfull.');
+    },
+    (error) => {
+        console.error('error');
+    }
+);
+```
+
+### MFA Verify
+
+MFA verify service is calling `/mfa/verify` endpoint of the API URL passed when SDK init. To call MFA verify service need to pass verification code and user apiKey.
+
+```ts
+import { PracteraSDK } from '@practera/practera-sdk';
+
+const practeraSDK = new PracteraSDK('apiUrl');
+
+let data = {
+   code: '123456',
+   apiKey: 'xzcv345'
+}
+
+practeraSDK.mfaVerify(data).then(
+    (response) => {
+        console.log('Code verification successfull');
+    },
+    (error) => {
+        console.error('error');
+    }
+);
+```
+
+### MFA SMS
+
+MFA sms service is calling `/mfa/sms` endpoint of the API URL passed when SDK init. To call MFA sms service need to pass user apiKey.
+
+```ts
+import { PracteraSDK } from '@practera/practera-sdk';
+
+const practeraSDK = new PracteraSDK('apiUrl');
+
+let data = {
+   apiKey: 'xzcv345'
+}
+
+practeraSDK.mfaSMS(data).then(
+    (response) => {
+        console.log('sms send with verification code.');
+    },
+    (error) => {
+        console.error('error');
+    }
+);
+```
