@@ -6,6 +6,10 @@ import {
   mfaSMS,
   mfaVerify,
 } from "./services/auth/auth-service";
+import { 
+  register, 
+  verify as verifyRegistration 
+} from './services/registration/registration-service';
 import _ from "lodash";
 
 interface MFARigisterParams {
@@ -69,6 +73,41 @@ export class PracteraSDK {
   resetPassword(data: any): Promise<any> {
     return resetPassword(this.apiUrl, data.apiKey, {
       password: data.password,
+    });
+  }
+
+  /**
+   * register user through Register endpoint
+   * @param  data json object - User new password, user_id & registration key code
+   * {
+   *  password: '1234',
+   *  user_id: 'asdhkj',
+   *  key: 12345,
+   * }
+   * @returns promise
+   */
+  register(data: any): Promise<any> {
+    const { password, user_id, key } = data;
+    return register(this.apiUrl, data.apiKey, data.appkey, {
+      password,
+      user_id,
+      key,
+    });
+  }
+
+  /**
+   * verify current registration validity
+   * @param  data json object - User new password, user_id & registration key code
+   * {
+   *  email: 'test@email.com',
+   *  key: 12345,
+   * }
+   * @returns promise
+   */
+  verifyRegistration(data: any): Promise<any> {
+    return verifyRegistration(this.apiUrl, data.apiKey, data.appkey, {
+      email: data.email,
+      key: data.key,
     });
   }
 
