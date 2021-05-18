@@ -6,9 +6,9 @@ import {
   mfaSMS,
   mfaVerify,
 } from "./services/auth/auth-service";
-import { 
-  register, 
-  verify as verifyRegistration 
+import {
+  register,
+  verify as verifyRegistration
 } from './services/registration/registration-service';
 import _ from "lodash";
 
@@ -105,9 +105,10 @@ export class PracteraSDK {
    * @returns promise
    */
   verifyRegistration(data: any): Promise<any> {
+    const { email, key } = data;
     return verifyRegistration(this.apiUrl, data.apiKey, data.appkey, {
-      email: data.email,
-      key: data.key,
+      email,
+      key,
     });
   }
 
