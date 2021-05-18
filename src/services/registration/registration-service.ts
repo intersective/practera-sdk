@@ -1,6 +1,5 @@
-import { makePostApiCall, makePutApiCall } from '../request/request-service';
+import { makePostApiCall } from '../request/request-service';
 import { createFullApiUrl } from '../utils/utils-service';
-import _ from "lodash";
 
 interface Registration {
   password: string;
