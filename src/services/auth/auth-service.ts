@@ -1,6 +1,6 @@
-import { makePostApiCall, makePutApiCall } from '../request/request-service';
+import { makeGetApiCall, makePostApiCall, makePutApiCall } from '../request/request-service';
 import { createFullApiUrl } from '../utils/utils-service';
-import _ from "lodash";
+import _ from 'lodash';
 
 interface MFARigisterParams {
   countryCode: string;
@@ -9,6 +9,10 @@ interface MFARigisterParams {
 
 interface MFAVirifyParams {
   code: string;
+}
+
+export interface ConfigParams {
+  domain: string;
 }
 
 /**
@@ -29,6 +33,7 @@ const api = {
   getStack: 'stack'
 };
 
+const apiUrlError = 'API Url can not be empty';
 const apiUrlApiKeyError = 'API Url and API key can not be empty';
 
 function createResetDirectLinks(globalLoginUrl: string): any {
@@ -127,7 +132,7 @@ export function mfaRegister(apiUrl: string, apiKey: string, body: MFARigisterPar
     throw new Error(apiUrlApiKeyError);
   }
   if (_.isEmpty(body.countryCode) || _.isEmpty(body.number)) {
-    throw new Error("Country code and phone number can not be empty");
+    throw new Error('Country code and phone number can not be empty');
   }
   const fullUrl = createFullApiUrl(apiUrl, api.mfaRegister);
   return makePostApiCall(fullUrl, body, {
@@ -152,12 +157,35 @@ export function mfaVerify(apiUrl: string, apiKey: string, body: MFAVirifyParams)
     throw new Error(apiUrlApiKeyError);
   }
   if (_.isEmpty(body.code)) {
-    throw new Error("Verification code can not be empty");
+    throw new Error('Verification code can not be empty');
   }
   const fullUrl = createFullApiUrl(apiUrl, api.mfaVerify);
   return makePostApiCall(fullUrl, body, {
     headers: {
       apiKey: apiKey
     }
+  });
+}
+
+/**
+ * This method will call experience list service to get custom config of the experience.
+ * @param apiUrl string - actual API URL.
+ * @param data json object - params need to pass to the api call
+ * {
+ *  domain: 'https://app.practera.com',
+ *  
+ * }
+ * @returns promise
+ */
+export function getConfig(apiUrl: string, data: ConfigParams): Promise<any> {
+  if (_.isEmpty(apiUrl)) {
+    throw new Error(apiUrlError);
+  }
+  if (_.isEmpty(data.domain)) {
+    throw new Error('Tech Error: Domain is compulsory!');
+  }
+  const fullUrl = createFullApiUrl(apiUrl, api.getConfig);
+  return makeGetApiCall(fullUrl, {
+    params: data
   });
 }

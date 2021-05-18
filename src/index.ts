@@ -5,8 +5,10 @@ import {
   mfaRegister,
   mfaSMS,
   mfaVerify,
-} from "./services/auth/auth-service";
-import _ from "lodash";
+  getConfig,
+  ConfigParams
+} from './services/auth/auth-service';
+import _ from 'lodash';
 
 interface MFARigisterParams {
   countryCode: string;
@@ -102,7 +104,7 @@ export class PracteraSDK {
    */
   mfaSMS(data: MFASMSParams): Promise<any> {
     if (_.isEmpty(data.apiKey)) {
-      throw new Error("User apiKey can not be empty");
+      throw new Error('User apiKey can not be empty');
     }
     return mfaSMS(this.apiUrl, data.apiKey);
   }
@@ -118,10 +120,27 @@ export class PracteraSDK {
    */
   mfaVerify(data: MFAVerifyParams): Promise<any> {
     if (_.isEmpty(data.code) || _.isEmpty(data.apiKey)) {
-      throw new Error("Verification code and user apiKey can not be empty");
+      throw new Error('Verification code and user apiKey can not be empty');
     }
     return mfaVerify(this.apiUrl, data.apiKey, {
       code: data.code,
     });
+  }
+
+  /**
+   * This method will call experience list api to get custom config of the experience.
+   * @param apiUrl string - actual API URL.
+   * @param data json object - params need to pass to the api call
+   * {
+   *  domain: 'https://app.practera.com',
+   *  
+   * }
+   * @returns promise
+   */
+  getCustomConfig(data: ConfigParams): Promise<any> {
+    if (_.isEmpty(data.domain)) {
+      throw new Error('Tech Error: Domain is compulsory!');
+    }
+    return getConfig(this.apiUrl, data);
   }
 }

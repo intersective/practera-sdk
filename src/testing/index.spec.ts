@@ -143,3 +143,29 @@ describe('When testing mfaVerify()', (): void => {
     expect(loginService.mfaVerify).toHaveBeenCalledWith('testAPI.com/', apiKey, body);
   });
 });
+
+describe('When testing getCustomConfig()', (): void => {
+  it('should throw error if required data empty', (): void => {
+    const data = {
+      domain: ''
+    };
+    const sdk = new PracteraSDK('testAPI.com/');
+    try {
+      sdk.getCustomConfig(data);
+    } catch (error) {
+      expect(error.message).toEqual('Tech Error: Domain is compulsory!');
+    }
+  });
+
+  it('should call experience list service with correct data', (): void => {
+    spyOn(loginService,'getConfig').and.returnValue(new Promise<void>((resolve, reject) => {
+      resolve();
+    }));
+    const data = {
+      domain: 'https://app.practera.com'
+    };
+    const sdk = new PracteraSDK('testAPI.com/');
+    sdk.getCustomConfig(data);
+    expect(loginService.getConfig).toHaveBeenCalledWith('testAPI.com/', data);
+  });
+});
