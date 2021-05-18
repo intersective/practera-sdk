@@ -132,8 +132,7 @@ export class PracteraSDK {
    * @param apiUrl string - actual API URL.
    * @param data json object - params need to pass to the api call
    * {
-   *  domain: 'https://app.practera.com',
-   *  
+   *  domain: 'https://app.practera.com'
    * }
    * @returns promise
    */
