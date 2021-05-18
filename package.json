@@ -21,9 +21,9 @@
   },
   "scripts": {
     "lint": "eslint . --ext .ts",
-    "test": "npm run build && npx jest --coverage",
+    "test": "npm run build -- -p tsconfig-build.json && npx jest --coverage",
     "build": "tsc",
-    "prepare": "npm run build",
+    "prepare": "npm run build -- -p tsconfig-build.json",
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint"
   },
@@ -32,7 +32,7 @@
     "axios": "^0.21.1"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.22",
+    "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.24.0",

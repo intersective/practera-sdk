@@ -56,9 +56,6 @@ export function makeGetApiCall(endpoint: string, httpOptions?: any): Promise<any
  */
 export function makePostApiCall(endpoint: string, data: any, httpOptions?: any): Promise<any> {
   const requestConfig = createRequestConfig(httpOptions);
-  console.log('msg::', endpoint);
-  console.log('msg::', data);
-  console.log('msg::', requestConfig);
   return Axios.post(endpoint, data, requestConfig);
 }
 

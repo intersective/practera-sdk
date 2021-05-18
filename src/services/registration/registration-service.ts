@@ -2,9 +2,14 @@ import { makePostApiCall, makePutApiCall } from '../request/request-service';
 import { createFullApiUrl } from '../utils/utils-service';
 import _ from "lodash";
 
-interface RegisterData {
+interface Registration {
   password: string;
   user_id: number;
+  key: string;
+}
+
+interface VerifyRegistration {
+  email: string;
   key: string;
 }
 
@@ -30,7 +35,7 @@ const api = {
  * }
  * @returns promise
  */
-export function register(apiUrl: string, apiKey: string, appkey: string, body: RegisterData): Promise<any> {
+export function register(apiUrl: string, apiKey: string, appkey: string, body: Registration): Promise<any> {
   const fullUrl = createFullApiUrl(apiUrl, api.register);
   return makePostApiCall(fullUrl, body, {
     headers: {
@@ -40,7 +45,7 @@ export function register(apiUrl: string, apiKey: string, appkey: string, body: R
   });
 }
 
-export function verify(apiUrl: string, apiKey: string, appkey: string, body: any): Promise<any> {
+export function verify(apiUrl: string, apiKey: string, appkey: string, body: VerifyRegistration): Promise<any> {
   const fullUrl = createFullApiUrl(apiUrl, api.verify);
   return makePostApiCall(fullUrl, body, {
     headers: {
