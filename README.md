@@ -175,3 +175,26 @@ practeraSDK.mfaSMS(data).then(
     }
 );
 ```
+
+### Get Custom Config
+
+Get custom config service is calling `/api/v2/plan/experience/list` endpoint of the API URL passed when SDK init. To call Get custom config service need to pass domain.
+
+```ts
+import { PracteraSDK } from '@practera/practera-sdk';
+
+const practeraSDK = new PracteraSDK('apiUrl');
+
+let data = {
+   domain: 'https://app.practera.com'
+}
+
+practeraSDK.getCustomConfig(data).then(
+    (response) => {
+        console.log('returning experience config');
+    },
+    (error) => {
+        console.error('error');
+    }
+);
+```
