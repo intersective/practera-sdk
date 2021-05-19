@@ -104,6 +104,59 @@ practeraSDK.resetPassword(data).then(
 );
 ```
 
+### Account Registration/Activation
+User account registration/activation uses `/registration_details` endpoint. 
+Purpose: Activate/register user account with user-specified password.
+
+```ts
+import { PracteraSDK } from '@practera/practera-sdk';
+
+const practeraSDK = new PracteraSDK('apiUrl');
+
+let data = {
+  appkey: 'sample-appkey',
+  apiKey: 'sample-apikey',
+  password: 'sample-password',
+  user_id: 12345,
+  key: 'sample-key',
+};
+
+practeraSDK.register(data).then(
+    (response) => {
+        console.log('Registration successful.');
+    },
+    (error) => {
+        console.error('error');
+    }
+);
+```
+
+### Account Registration Verification
+User account registration verification uses `/verification_codes` endpoint.
+Purpose: verify current user registration session
+
+```ts
+import { PracteraSDK } from '@practera/practera-sdk';
+
+const practeraSDK = new PracteraSDK('apiUrl');
+
+let data = {
+  appkey: 'sample-appkey',
+  apiKey: 'sample-apikey',
+  email: 'sample-password',
+  key: 'sample-key',
+};
+
+practeraSDK.verifyRegistration(data).then(
+    (response) => {
+        console.log('Registration session is valid.');
+    },
+    (error) => {
+        console.error('error');
+    }
+);
+```
+
 ### MFA Register
 
 MFA Register service is calling `/mfa/register` endpoint of the API URL passed when SDK init. To call MFA Register service need to pass country code of the phone number, actual phone number and user apiKey.

@@ -82,6 +82,8 @@ export class PracteraSDK {
    * register user through Register endpoint
    * @param  data json object - User new password, user_id & registration key code
    * {
+   *  apiKey: 'abc123',
+   *  appkey: 'abcd1234',
    *  password: '1234',
    *  user_id: 'asdhkj',
    *  key: 12345,
@@ -101,6 +103,8 @@ export class PracteraSDK {
    * verify current registration validity
    * @param  data json object - User new password, user_id & registration key code
    * {
+   *  apiKey: 'abc123',
+   *  appkey: 'abcd1234',
    *  email: 'test@email.com',
    *  key: 12345,
    * }

@@ -23,10 +23,10 @@ const api = {
   verify: '/api/verification_codes.json',
 };
 
-
 /**
  * Activating & register new user through API endpoint
  * @param apiUrl string - actual API URL.
+ * @param apiKey string - actual API URL.
  * @param body json object - login credentials
  * {
  *   password: string;
@@ -49,6 +49,14 @@ export function register(apiUrl: string, apiKey: string, appkey: string, body: R
   });
 }
 
+/**
+ * verify user registration by checking email with unique key
+ * @param  {string}             apiUrl endpoint domain url
+ * @param  {string}             apiKey user's session
+ * @param  {string}             appkey app specific id
+ * @param  {VerifyRegistration} body   mandatory content required by endpoint
+ * @return {Promise<any>}              axios promise respond
+ */
 export function verify(apiUrl: string, apiKey: string, appkey: string, body: VerifyRegistration): Promise<any> {
   if (_.isEmpty(body.email) || _.isEmpty(body.key)) {
     throw new Error("Email & key values must not be empty");
