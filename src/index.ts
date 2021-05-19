@@ -17,24 +17,24 @@ import _ from "lodash";
 interface MFARigisterParams {
   countryCode: string;
   number: string;
-  apiKey: string;
 }
 
 interface MFAVerifyParams {
   code: string;
-  apiKey: string;
-}
-
-interface MFASMSParams {
-  apiKey: string;
 }
 
 export class PracteraSDK {
   // Actual API URL pass to the package object.
   protected apiUrl: string;
+  protected apiKey = '';
 
-  constructor(apiUrl: string) {
+  constructor(apiUrl: string, apiKey?: string) {
     this.apiUrl = apiUrl;
+
+    // make apiKey optional, not every use case need apiKey
+    if (apiKey) {
+      this.apiKey = apiKey;
+    }
   }
 
   /**
@@ -67,13 +67,15 @@ export class PracteraSDK {
    * this method will call reset password api to reset user password.
    * @param data json object - User new password and reset password apikey came in email.
    * {
-   *  password: '1234',
-   *  apiKey: 'asdhkj'
+   *  password: '1234'
    * }
    * @returns promise
    */
   resetPassword(data: any): Promise<any> {
-    return resetPassword(this.apiUrl, data.apiKey, {
+    if (_.isEmpty(this.apiKey)) {
+      throw new Error('PracteraSDK instance must be instantiated with apikey.');
+    }
+    return resetPassword(this.apiUrl, this.apiKey, {
       password: data.password,
     });
   }
@@ -82,7 +84,6 @@ export class PracteraSDK {
    * register user through Register endpoint
    * @param  data json object - User new password, user_id & registration key code
    * {
-   *  apiKey: 'abc123',
    *  appkey: 'abcd1234',
    *  password: '1234',
    *  user_id: 'asdhkj',
@@ -91,8 +92,12 @@ export class PracteraSDK {
    * @returns promise
    */
   register(data: any): Promise<any> {
+    if (_.isEmpty(this.apiKey)) {
+      throw new Error('PracteraSDK instance must be instantiated with apikey.');
+    }
+
     const { password, user_id, key } = data;
-    return register(this.apiUrl, data.apiKey, data.appkey, {
+    return register(this.apiUrl, this.apiKey, data.appkey, {
       password,
       user_id,
       key,
@@ -103,7 +108,6 @@ export class PracteraSDK {
    * verify current registration validity
    * @param  data json object - User new password, user_id & registration key code
    * {
-   *  apiKey: 'abc123',
    *  appkey: 'abcd1234',
    *  email: 'test@email.com',
    *  key: 12345,
@@ -111,8 +115,12 @@ export class PracteraSDK {
    * @returns promise
    */
   verifyRegistration(data: any): Promise<any> {
+    if (_.isEmpty(this.apiKey)) {
+      throw new Error('PracteraSDK instance must be instantiated with apikey.');
+    }
+
     const { email, key } = data;
-    return verifyRegistration(this.apiUrl, data.apiKey, data.appkey, {
+    return verifyRegistration(this.apiUrl, this.apiKey, data.appkey, {
       email,
       key,
     });
@@ -124,15 +132,19 @@ export class PracteraSDK {
    * {
    *  countryCode: '+94',
    *  number: '651684654',
-   *  apiKey: 'asdsadsdfefwe2343'
    * }
    * @returns promise
    */
   mfaRegister(data: MFARigisterParams): Promise<any> {
-    if (_.isEmpty(data.countryCode) || _.isEmpty(data.number) || _.isEmpty(data.apiKey)) {
-      throw new Error('Country code, phone number and apiKey can not be empty');
+    if (_.isEmpty(this.apiKey)) {
+      throw new Error('PracteraSDK instance must be instantiated with apikey.');
     }
-    return mfaRegister(this.apiUrl, data.apiKey, {
+
+    if (_.isEmpty(data.countryCode) || _.isEmpty(data.number)) {
+      throw new Error('Country code and phone number can not be empty');
+    }
+
+    return mfaRegister(this.apiUrl, this.apiKey, {
       countryCode: data.countryCode,
       number: data.number,
     });
@@ -140,17 +152,13 @@ export class PracteraSDK {
 
   /**
    * This method will call mfa sms api to send sms to a user.
-   * @param data json object - user apikey get when user login to the system
-   * {
-   *  apiKey: 'asdhkj'
-   * }
    * @returns promise
    */
-  mfaSMS(data: MFASMSParams): Promise<any> {
-    if (_.isEmpty(data.apiKey)) {
-      throw new Error('User apiKey can not be empty');
+  mfaSMS(): Promise<any> {
+    if (_.isEmpty(this.apiKey)) {
+      throw new Error('PracteraSDK instance must be instantiated with apikey.');
     }
-    return mfaSMS(this.apiUrl, data.apiKey);
+    return mfaSMS(this.apiUrl, this.apiKey);
   }
 
   /**
@@ -158,15 +166,18 @@ export class PracteraSDK {
    * @param data json object - code user type, that came as sms and user apiKey
    * {
    *  code: '1234',
-   *  apiKey: 'asdhkj'
    * }
    * @returns promise
    */
   mfaVerify(data: MFAVerifyParams): Promise<any> {
-    if (_.isEmpty(data.code) || _.isEmpty(data.apiKey)) {
-      throw new Error('Verification code and user apiKey can not be empty');
+    if (_.isEmpty(this.apiKey)) {
+      throw new Error('PracteraSDK instance must be instantiated with apikey.');
     }
-    return mfaVerify(this.apiUrl, data.apiKey, {
+    if (_.isEmpty(data.code)) {
+      throw new Error('Verification code can not be empty');
+    }
+
+    return mfaVerify(this.apiUrl, this.apiKey, {
       code: data.code,
     });
   }
