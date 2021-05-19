@@ -45,7 +45,7 @@ describe('registration-service', () => {
 		it('should call request service with full url and data', () => {
       mockedCall.mockClear();
 			register(apiurl, apiKey, appkey, {
-        password: 'dummy_password',
+        password: 'dummy_sample',
         user_id: 12345,
         key: '12345',
       });
