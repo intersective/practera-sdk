@@ -141,7 +141,7 @@ export class PracteraSDK {
     }
 
     if (_.isEmpty(data.countryCode) || _.isEmpty(data.number)) {
-      throw new Error('Country code and phone number can not be empty');
+      throw new Error('Country code and phone number can not be empty.');
     }
 
     return mfaRegister(this.apiUrl, this.apiKey, {
