@@ -2,6 +2,8 @@ import { login, forgotPassword, resetPassword, mfaRegister, mfaSMS, mfaVerify, g
 import * as requestService from '../services/request/request-service';
 import * as utilService from '../services/utils/utils-service';
 import { DUMMY_PASSWORD } from './mock-data';
+const API_URL = 'testAPI.com/';
+const API_WARNING = 'API Url and API key can not be empty';
 
 describe('login()', () => {
   it('should call request service with testAPi.com/login and data', () => {
@@ -13,8 +15,8 @@ describe('login()', () => {
       userName: 'testUser',
       password: DUMMY_PASSWORD
     };
-    login('testAPI.com/', data);
-    expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com/', 'login');
+    login(API_URL, data);
+    expect(utilService.createFullApiUrl).toHaveBeenCalledWith(API_URL, 'login');
     expect(requestService.makePostApiCall).toHaveBeenCalledWith('testAPI.com/login', data);
   });
 });
@@ -34,8 +36,8 @@ describe('When testing forgotPassword()', () => {
       directLink: 'https://login.practera.com?action=direct&apiKey=',
       resetLink: 'https://login.practera.com?action=resetpassword&apiKey='
     }
-    forgotPassword('testAPI.com/', data);
-    expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com/', 'forgotPassword');
+    forgotPassword(API_URL, data);
+    expect(utilService.createFullApiUrl).toHaveBeenCalledWith(API_URL, 'forgotPassword');
     expect(requestService.makePostApiCall).toHaveBeenCalledWith('testAPI.com/forgotPassword', requestData);
   });
 });
@@ -50,8 +52,8 @@ describe('When testing resetPassword()', () => {
     const body = {
       password: DUMMY_PASSWORD
     };
-    resetPassword('testAPI.com/', apiKey, body);
-    expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com/', 'user');
+    resetPassword(API_URL, apiKey, body);
+    expect(utilService.createFullApiUrl).toHaveBeenCalledWith(API_URL, 'user');
     expect(requestService.makePutApiCall).toHaveBeenCalledWith('testAPI.com/user', {
       password: DUMMY_PASSWORD
     }, {
@@ -65,9 +67,9 @@ describe('When testing resetPassword()', () => {
 describe('When testing mfaSMS()', () => {
   it('should throw error if required data empty', async () => {
     try {
-      await mfaSMS('testAPI.com/', '');
+      await mfaSMS(API_URL, '');
     } catch (error) {
-      expect(error.message).toEqual('API Url and API key can not be empty');
+      expect(error.message).toEqual(API_WARNING);
     }
   });
   it('should call mfa sms service with full API URL and data', () => {
@@ -76,8 +78,8 @@ describe('When testing mfaSMS()', () => {
       resolve();
     }));
     const apiKey = 'axcd';
-    mfaSMS('testAPI.com/', apiKey);
-    expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com/', 'mfa/sms');
+    mfaSMS(API_URL, apiKey);
+    expect(utilService.createFullApiUrl).toHaveBeenCalledWith(API_URL, 'mfa/sms');
     expect(requestService.makePostApiCall).toHaveBeenCalledWith('testAPI.com/mfa/sms', {}, {
       headers: {
         apiKey: apiKey
@@ -93,9 +95,9 @@ describe('When testing mfaRegister()', () => {
       number: '1212323i'
     }
     try {
-      await mfaRegister('testAPI.com/', '', body);
+      await mfaRegister(API_URL, '', body);
     } catch (error) {
-      expect(error.message).toEqual('API Url and API key can not be empty');
+      expect(error.message).toEqual(API_WARNING);
     }
   });
 
@@ -105,7 +107,7 @@ describe('When testing mfaRegister()', () => {
       number: ''
     }
     try {
-      await mfaRegister('testAPI.com/', 'xcvb', body);
+      await mfaRegister(API_URL, 'xcvb', body);
     } catch (error) {
       expect(error.message).toEqual('Country code and phone number can not be empty');
     }
@@ -121,8 +123,8 @@ describe('When testing mfaRegister()', () => {
       countryCode: '+94',
       number: '122323'
     }
-    mfaRegister('testAPI.com/', apiKey, body);
-    expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com/', 'mfa/register');
+    mfaRegister(API_URL, apiKey, body);
+    expect(utilService.createFullApiUrl).toHaveBeenCalledWith(API_URL, 'mfa/register');
     expect(requestService.makePostApiCall).toHaveBeenCalledWith('testAPI.com/mfa/register', body, {
       headers: {
         apiKey: apiKey
@@ -138,9 +140,9 @@ describe('When testing mfaVerify()', () => {
     };
 
     try {
-      await mfaVerify('testAPI.com/', '', body);
+      await mfaVerify(API_URL, '', body);
     } catch (error) {
-      expect(error.message).toEqual('API Url and API key can not be empty');
+      expect(error.message).toEqual(API_WARNING);
     }
   });
 
@@ -149,7 +151,7 @@ describe('When testing mfaVerify()', () => {
       code: ''
     }
     try {
-      await mfaVerify('testAPI.com/', 'xcvb', body);
+      await mfaVerify(API_URL, 'xcvb', body);
     } catch (error) {
       expect(error.message).toEqual('Verification code can not be empty');
     }
@@ -164,8 +166,8 @@ describe('When testing mfaVerify()', () => {
     const body = {
       code: '12345'
     }
-    mfaVerify('testAPI.com/', apiKey, body);
-    expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com/', 'mfa/verify');
+    mfaVerify(API_URL, apiKey, body);
+    expect(utilService.createFullApiUrl).toHaveBeenCalledWith(API_URL, 'mfa/verify');
     expect(requestService.makePostApiCall).toHaveBeenCalledWith('testAPI.com/mfa/verify', body, {
       headers: {
         apiKey: apiKey
@@ -192,7 +194,7 @@ describe('When testing getConfig()', () => {
     };
 
     try {
-      await getConfig('testAPI.com/', data);
+      await getConfig(API_URL, data);
     } catch (error) {
       expect(error.message).toEqual('Tech Error: Domain is compulsory!');
     }

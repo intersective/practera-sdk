@@ -23,6 +23,8 @@ interface MFAVerifyParams {
   code: string;
 }
 
+const APIKEY_WARNING = 'PracteraSDK instance must be instantiated with apikey.';
+
 export class PracteraSDK {
   // Actual API URL pass to the package object.
   protected apiUrl: string;
@@ -73,7 +75,7 @@ export class PracteraSDK {
    */
   resetPassword(data: any): Promise<any> {
     if (_.isEmpty(this.apiKey)) {
-      throw new Error('PracteraSDK instance must be instantiated with apikey.');
+      throw new Error(APIKEY_WARNING);
     }
     return resetPassword(this.apiUrl, this.apiKey, {
       password: data.password,
@@ -93,7 +95,7 @@ export class PracteraSDK {
    */
   register(data: any): Promise<any> {
     if (_.isEmpty(this.apiKey)) {
-      throw new Error('PracteraSDK instance must be instantiated with apikey.');
+      throw new Error(APIKEY_WARNING);
     }
 
     const { password, user_id, key } = data;
@@ -116,7 +118,7 @@ export class PracteraSDK {
    */
   verifyRegistration(data: any): Promise<any> {
     if (_.isEmpty(this.apiKey)) {
-      throw new Error('PracteraSDK instance must be instantiated with apikey.');
+      throw new Error(APIKEY_WARNING);
     }
 
     const { email, key } = data;
@@ -137,7 +139,7 @@ export class PracteraSDK {
    */
   mfaRegister(data: MFARigisterParams): Promise<any> {
     if (_.isEmpty(this.apiKey)) {
-      throw new Error('PracteraSDK instance must be instantiated with apikey.');
+      throw new Error(APIKEY_WARNING);
     }
 
     if (_.isEmpty(data.countryCode) || _.isEmpty(data.number)) {
@@ -156,7 +158,7 @@ export class PracteraSDK {
    */
   mfaSMS(): Promise<any> {
     if (_.isEmpty(this.apiKey)) {
-      throw new Error('PracteraSDK instance must be instantiated with apikey.');
+      throw new Error(APIKEY_WARNING);
     }
     return mfaSMS(this.apiUrl, this.apiKey);
   }
@@ -171,7 +173,7 @@ export class PracteraSDK {
    */
   mfaVerify(data: MFAVerifyParams): Promise<any> {
     if (_.isEmpty(this.apiKey)) {
-      throw new Error('PracteraSDK instance must be instantiated with apikey.');
+      throw new Error(APIKEY_WARNING);
     }
     if (_.isEmpty(data.code)) {
       throw new Error('Verification code can not be empty');
