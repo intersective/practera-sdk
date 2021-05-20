@@ -3,8 +3,8 @@ import * as requestService from '../services/request/request-service';
 import * as utilService from '../services/utils/utils-service';
 import { DUMMY_PASSWORD } from './mock-data';
 
-describe('When testing login()', () => {
-  it('should call request service with full API URL and data', () => {
+describe('login()', () => {
+  it('should call request service with testAPi.com/login and data', () => {
     spyOn(utilService,'createFullApiUrl').and.returnValue('testAPI.com/login');
     spyOn(requestService,'makePostApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
@@ -20,7 +20,7 @@ describe('When testing login()', () => {
 });
 
 describe('When testing forgotPassword()', () => {
-  it('should call request service with full API URL and data', () => {
+  it('should call request service with testAPI.com/forgotPassword and data', () => {
     spyOn(utilService,'createFullApiUrl').and.returnValue('testAPI.com/forgotPassword');
     spyOn(requestService,'makePostApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
@@ -41,7 +41,7 @@ describe('When testing forgotPassword()', () => {
 });
 
 describe('When testing resetPassword()', () => {
-  it('should call request service with full API URL and data', () => {
+  it('should call request service with testAPI.com/user and data', () => {
     spyOn(utilService,'createFullApiUrl').and.returnValue('testAPI.com/user');
     spyOn(requestService,'makePutApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
