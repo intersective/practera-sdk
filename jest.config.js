@@ -14,7 +14,4 @@ module.exports = {
     ".spec.ts",
   ],
   coverageDirectory: 'coverage/',
-  transform: {
-    "^.+\\.ts$": "ts-jest"
-  },
 };
