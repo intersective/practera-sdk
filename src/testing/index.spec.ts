@@ -15,7 +15,7 @@ describe('When testing login()', () => {
     }));
     const data = {
       userName: 'testUser',
-      password: '12345'
+      password: DUMMY_PASSWORD
     };
     const sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
     sdk.login(data);
@@ -54,10 +54,10 @@ describe('When testing resetPassword()', () => {
       resolve();
     }));
     const body = {
-      password: '1234'
+      password: DUMMY_PASSWORD
     };
     const data = {
-      password: '1234',
+      password: DUMMY_PASSWORD,
     };
     const sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
     sdk.resetPassword(data);

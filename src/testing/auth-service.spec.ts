@@ -1,6 +1,7 @@
 import { login, forgotPassword, resetPassword, mfaRegister, mfaSMS, mfaVerify, getConfig } from '../services/auth/auth-service';
 import * as requestService from '../services/request/request-service';
 import * as utilService from '../services/utils/utils-service';
+import { DUMMY_PASSWORD } from './mock-data';
 
 describe('When testing login()', (): void => {
   it('should call request service with full API URL and data', (): void => {
@@ -10,7 +11,7 @@ describe('When testing login()', (): void => {
     }));
     const data = {
       userName: 'testUser',
-      password: '12345'
+      password: DUMMY_PASSWORD
     };
     login('testAPI.com/', data);
     expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com/', 'login');
@@ -47,12 +48,12 @@ describe('When testing resetPassword()', (): void => {
     }));
     const apiKey = 'axcd';
     const body = {
-      password: '1234'
+      password: DUMMY_PASSWORD
     };
     resetPassword('testAPI.com/', apiKey, body);
     expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com/', 'user');
     expect(requestService.makePutApiCall).toHaveBeenCalledWith('testAPI.com/user', {
-      password: '1234'
+      password: DUMMY_PASSWORD
     }, {
       headers: {
         apiKey: apiKey
