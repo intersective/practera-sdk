@@ -7,6 +7,7 @@ import * as registrationService from '../services/registration/registration-serv
 jest.mock('../services/registration/registration-service');
 const SAMPLE_APIKEY = 'sample-apikey';
 const API_URL = 'testAPI.com/';
+const APIKEY_WARNING = 'PracteraSDK instance must be instantiated with apikey.';
 
 describe('When testing login()', () => {
   it('should call login service with correct data', () => {
@@ -45,7 +46,7 @@ describe('When testing resetPassword()', () => {
     try {
       await sdk.resetPassword({ password: DUMMY_PASSWORD });
     } catch(error) {
-      expect(error.message).toEqual('PracteraSDK instance must be instantiated with apikey.');
+      expect(error.message).toEqual(APIKEY_WARNING);
     }
   });
 
@@ -77,7 +78,7 @@ describe('verifyRegistration()', () => {
     try {
       await sdk.verifyRegistration(data);
     } catch (error) {
-      expect(error.message).toEqual('PracteraSDK instance must be instantiated with apikey.');
+      expect(error.message).toEqual(APIKEY_WARNING);
     }
   });
 
@@ -134,7 +135,7 @@ describe('register()', () => {
     try {
       await sdk.register(data);
     } catch (error) {
-      expect(error.message).toEqual('PracteraSDK instance must be instantiated with apikey.');
+      expect(error.message).toEqual(APIKEY_WARNING);
     }
   });
 
@@ -153,7 +154,7 @@ describe('register()', () => {
     try {
       await sdk.register(data);
     } catch (error) {
-      expect(error.message).toEqual('PracteraSDK instance must be instantiated with apikey.');
+      expect(error.message).toEqual(APIKEY_WARNING);
     }
   });
 
@@ -193,7 +194,7 @@ describe('When testing mfaRegister()', () => {
     try {
       await sdk.mfaRegister(data);
     } catch (error) {
-      expect(error.message).toEqual('PracteraSDK instance must be instantiated with apikey.');
+      expect(error.message).toEqual(APIKEY_WARNING);
     }
   });
 
@@ -234,7 +235,7 @@ describe('When testing mfaSMS()', () => {
     try {
       await sdk.mfaSMS();
     } catch (error) {
-      expect(error.message).toEqual('PracteraSDK instance must be instantiated with apikey.');
+      expect(error.message).toEqual(APIKEY_WARNING);
     }
   });
 
@@ -255,7 +256,7 @@ describe('When testing mfaVerify()', () => {
     try {
       await sdk.mfaVerify({ code: 'sample-code' });
     } catch(error) {
-      expect(error.message).toEqual('PracteraSDK instance must be instantiated with apikey.');
+      expect(error.message).toEqual(APIKEY_WARNING);
     }
   });
 
