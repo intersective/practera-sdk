@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   preset: 'ts-jest',
-  roots: ['./src/testing'],
+  roots: ['src/'],
   testEnvironment: 'node',
   collectCoverage: true,
   coverageReporters: ['lcov', 'text', 'html'],
@@ -14,9 +14,6 @@ module.exports = {
     ".spec.ts",
   ],
   coverageDirectory: 'coverage/',
-  testMatch: [
-    '**/?(*.)spec.ts'
-  ],
   transform: {
     "^.+\\.ts$": "ts-jest"
   },
