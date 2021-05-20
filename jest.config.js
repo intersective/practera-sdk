@@ -8,6 +8,11 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.ts',
   ],
+  coveragePathIgnorePatterns: [
+    "node_modules",
+    "mock-data.ts",
+    ".spec.ts",
+  ],
   coverageDirectory: 'coverage/',
   testMatch: [
     '**/?(*.)spec.ts'
