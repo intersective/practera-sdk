@@ -6,7 +6,8 @@ module.exports = {
   collectCoverage: true,
   coverageReporters: ['lcov', 'text', 'html'],
   collectCoverageFrom: [
-    'src/**/*.ts',
+    'src/services/**/*.ts',
+    'src/index.ts'
   ],
   coveragePathIgnorePatterns: [
     "node_modules",
@@ -14,4 +15,10 @@ module.exports = {
     ".spec.ts",
   ],
   coverageDirectory: 'coverage/',
+  testMatch: [
+    '**/?(*.)spec.ts'
+  ],
+  transform: {
+    "^.+\\.ts$": "ts-jest"
+  },
 };
