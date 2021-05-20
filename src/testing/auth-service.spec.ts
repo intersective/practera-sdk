@@ -3,8 +3,8 @@ import * as requestService from '../services/request/request-service';
 import * as utilService from '../services/utils/utils-service';
 import { DUMMY_PASSWORD } from './mock-data';
 
-describe('When testing login()', (): void => {
-  it('should call request service with full API URL and data', (): void => {
+describe('When testing login()', () => {
+  it('should call request service with full API URL and data', () => {
     spyOn(utilService,'createFullApiUrl').and.returnValue('testAPI.com/login');
     spyOn(requestService,'makePostApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
@@ -19,8 +19,8 @@ describe('When testing login()', (): void => {
   });
 });
 
-describe('When testing forgotPassword()', (): void => {
-  it('should call request service with full API URL and data', (): void => {
+describe('When testing forgotPassword()', () => {
+  it('should call request service with full API URL and data', () => {
     spyOn(utilService,'createFullApiUrl').and.returnValue('testAPI.com/forgotPassword');
     spyOn(requestService,'makePostApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
@@ -40,8 +40,8 @@ describe('When testing forgotPassword()', (): void => {
   });
 });
 
-describe('When testing resetPassword()', (): void => {
-  it('should call request service with full API URL and data', (): void => {
+describe('When testing resetPassword()', () => {
+  it('should call request service with full API URL and data', () => {
     spyOn(utilService,'createFullApiUrl').and.returnValue('testAPI.com/user');
     spyOn(requestService,'makePutApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
@@ -62,15 +62,15 @@ describe('When testing resetPassword()', (): void => {
   });
 });
 
-describe('When testing mfaSMS()', (): void => {
-  it('should throw error if required data empty', (): void => {
+describe('When testing mfaSMS()', () => {
+  it('should throw error if required data empty', async () => {
     try {
-      mfaSMS('testAPI.com/', '');
+      await mfaSMS('testAPI.com/', '');
     } catch (error) {
       expect(error.message).toEqual('API Url and API key can not be empty');
     }
   });
-  it('should call mfa sms service with full API URL and data', (): void => {
+  it('should call mfa sms service with full API URL and data', () => {
     spyOn(utilService,'createFullApiUrl').and.returnValue('testAPI.com/mfa/sms');
     spyOn(requestService,'makePostApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
@@ -86,30 +86,32 @@ describe('When testing mfaSMS()', (): void => {
   });
 });
 
-describe('When testing mfaRegister()', (): void => {
-  it('should throw error if api url or api key is empty', (): void => {
+describe('When testing mfaRegister()', () => {
+  it('should throw error if api url or api key is empty', async () => {
     const body = {
       countryCode: '+94',
       number: '1212323i'
     }
     try {
-      mfaRegister('testAPI.com/', '', body);
+      await mfaRegister('testAPI.com/', '', body);
     } catch (error) {
       expect(error.message).toEqual('API Url and API key can not be empty');
     }
   });
-  it('should throw error if body data is empty', (): void => {
+
+  it('should throw error if body data is empty', async () => {
     const body = {
       countryCode: '+94',
       number: ''
     }
     try {
-      mfaRegister('testAPI.com/', 'xcvb', body);
+      await mfaRegister('testAPI.com/', 'xcvb', body);
     } catch (error) {
       expect(error.message).toEqual('Country code and phone number can not be empty');
     }
   });
-  it('should call mfa register service with full API URL and data', (): void => {
+
+  it('should call mfa register service with full API URL and data', () => {
     spyOn(utilService,'createFullApiUrl').and.returnValue('testAPI.com/mfa/register');
     spyOn(requestService,'makePostApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
@@ -129,28 +131,31 @@ describe('When testing mfaRegister()', (): void => {
   });
 });
 
-describe('When testing mfaVerify()', (): void => {
-  it('should throw error if api url or api key is empty', (): void => {
+describe('When testing mfaVerify()', () => {
+  it('should throw error if api url or api key is empty', async () => {
     const body = {
-      code: '12345'
-    }
+      code: '12345',
+    };
+
     try {
-      mfaVerify('testAPI.com/', '', body);
+      await mfaVerify('testAPI.com/', '', body);
     } catch (error) {
       expect(error.message).toEqual('API Url and API key can not be empty');
     }
   });
-  it('should throw error if body data is empty', (): void => {
+
+  it('should throw error if body data is empty', async () => {
     const body = {
       code: ''
     }
     try {
-      mfaVerify('testAPI.com/', 'xcvb', body);
+      await mfaVerify('testAPI.com/', 'xcvb', body);
     } catch (error) {
       expect(error.message).toEqual('Verification code can not be empty');
     }
   });
-  it('should call mfa verify service with full API URL and data', (): void => {
+
+  it('should call mfa verify service with full API URL and data', () => {
     spyOn(utilService,'createFullApiUrl').and.returnValue('testAPI.com/mfa/verify');
     spyOn(requestService,'makePostApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
@@ -169,28 +174,31 @@ describe('When testing mfaVerify()', (): void => {
   });
 });
 
-describe('When testing getConfig()', (): void => {
-  it('should throw error if api url is empty', (): void => {
+describe('When testing getConfig()', () => {
+  it('should throw error if api url is empty', async () => {
     const data = {
       domain: 'https://app.practera.com'
     }
     try {
-      getConfig('', data);
+      await getConfig('', data);
     } catch (error) {
       expect(error.message).toEqual('API Url can not be empty');
     }
   });
-  it('should throw error if domain is empty', (): void => {
+
+  it('should throw error if domain is empty', async () => {
     const data = {
-      domain: ''
-    }
+      domain: '',
+    };
+
     try {
-      getConfig('testAPI.com/', data);
+      await getConfig('testAPI.com/', data);
     } catch (error) {
       expect(error.message).toEqual('Tech Error: Domain is compulsory!');
     }
   });
-  it('should call experience list service with full API URL and data', (): void => {
+
+  it('should call experience list service with full API URL and data', () => {
     spyOn(utilService,'createFullApiUrl').and.returnValue('testAPI.com/api/v2/plan/experience/list');
     spyOn(requestService,'makeGetApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
