@@ -1,0 +1,5 @@
+const DUMMY_PASSWORD = "ABCDEFG";
+
+export {
+  DUMMY_PASSWORD
+};
