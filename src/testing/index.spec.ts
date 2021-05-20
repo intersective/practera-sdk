@@ -1,5 +1,10 @@
+import { mocked } from 'ts-jest/utils';
 import { PracteraSDK } from '../index';
+import { DUMMY_PASSWORD } from './mock-data';
 import * as loginService from '../services/auth/auth-service';
+
+import * as registrationService from '../services/registration/registration-service';
+jest.mock('../services/registration/registration-service');
 
 describe('When testing login()', (): void => {
   it('should call login service with correct data', (): void => {
@@ -47,6 +52,91 @@ describe('When testing resetPassword()', (): void => {
     const sdk = new PracteraSDK('testAPI.com/');
     sdk.resetPassword(data);
     expect(loginService.resetPassword).toHaveBeenCalledWith('testAPI.com/', apiKey, body);
+  });
+});
+
+describe('verifyRegistration()', () => {
+  let sdk: any;
+  beforeEach(() => {
+    sdk = new PracteraSDK('testAPI.com/');
+  });
+
+  it('should throw error if provided parameters are wrong', () => {
+    const data = {
+      apiKey: 'test-apikey',
+      appkey: 'test-appkey',
+      email: 'test@email.com',
+      key: 'test-key',
+    };
+    try {
+      sdk.verifyRegistration(data);
+    } catch (error) {
+      expect(error.message).toEqual('Email & key values must not be empty');
+    }
+  });
+
+  it('should call verify() from registration-service with correct data', (): void => {
+    mocked(registrationService.verify).mockImplementation((): Promise<any> => {
+      return Promise.resolve(true);
+    });
+
+    const body = {
+      email: 'test@email.com',
+      key: 'test-key',
+    };
+
+    const data = {
+      ...body,
+      apiKey: 'test-apikey',
+      appkey: 'test-appkey',
+    };
+
+    sdk.verifyRegistration(data);
+    expect(registrationService.verify).toHaveBeenCalledWith('testAPI.com/', data.apiKey, data.appkey, body);
+  });
+});
+
+describe('register()', () => {
+  let sdk: any;
+  beforeEach(() => {
+    sdk = new PracteraSDK('testAPI.com/');
+    mocked(registrationService.register).mockClear();
+  });
+
+  it('should throw error if provided parameters are wrong', () => {
+    mocked(registrationService.register).mockImplementation((): Promise<any> => {
+      return Promise.resolve(true);
+    });
+    const data = {
+      apiKey: 'test-apikey',
+      appkey: 'test-appkey',
+      password: DUMMY_PASSWORD,
+      user_id: 'test-user-id',
+    };
+    try {
+      sdk.register(data);
+    } catch (error) {
+      expect(error.message).toEqual('Password, user_id & key must not be empty');
+    }
+  });
+
+  it('should call register() from registration-service with correct data', (): void => {
+    mocked(registrationService.register).mockImplementation((): Promise<any> => {
+      return Promise.resolve(true);
+    });
+    const body = {
+      user_id: 123456,
+      password: DUMMY_PASSWORD,
+    };
+
+    const data = {
+      ...body,
+      apiKey: 'test-apikey',
+      appkey: 'test-appkey',
+    };
+
+    sdk.register(data);
+    expect(mocked(registrationService.register)).toHaveBeenCalledWith('testAPI.com/', data.apiKey, data.appkey, body);
   });
 });
 
