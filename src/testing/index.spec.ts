@@ -7,6 +7,8 @@ import * as registrationService from '../services/registration/registration-serv
 jest.mock('../services/registration/registration-service');
 const SAMPLE_APIKEY = 'sample-apikey';
 const API_URL = 'testAPI.com/';
+const APP_KEY = 'test-appkey';
+const TEST_EMAIL = 'test@email.com';
 const APIKEY_WARNING = 'PracteraSDK instance must be instantiated with apikey.';
 
 describe('When testing login()', () => {
@@ -71,8 +73,8 @@ describe('verifyRegistration()', () => {
   it('should throw error when apiKey not provided in constructor', async () => {
     sdk = new PracteraSDK(API_URL);
     const data = {
-      appkey: 'test-appkey',
-      email: 'test@email.com',
+      appkey: APP_KEY,
+      email: 'TEST_EMAIL',
       key: 'test-key',
     };
     try {
@@ -86,8 +88,8 @@ describe('verifyRegistration()', () => {
     sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
 
     const data = {
-      appkey: 'test-appkey',
-      email: 'test@email.com',
+      appkey: APP_KEY,
+      email: 'TEST_EMAIL',
       key: 'test-key',
     };
     try {
@@ -105,13 +107,13 @@ describe('verifyRegistration()', () => {
     });
 
     const body = {
-      email: 'test@email.com',
+      email: 'TEST_EMAIL',
       key: 'test-key',
     };
 
     const data = {
       ...body,
-      appkey: 'test-appkey',
+      appkey: APP_KEY,
     };
 
     sdk.verifyRegistration(data);
@@ -128,8 +130,8 @@ describe('register()', () => {
   it('should throw error when apiKey not provided in constructor', async () => {
     sdk = new PracteraSDK(API_URL);
     const data = {
-      appkey: 'test-appkey',
-      email: 'test@email.com',
+      appkey: APP_KEY,
+      email: 'TEST_EMAIL',
       key: 'test-key',
     };
     try {
@@ -147,7 +149,7 @@ describe('register()', () => {
     });
 
     const data = {
-      appkey: 'test-appkey',
+      appkey: APP_KEY,
       password: DUMMY_PASSWORD,
       user_id: 'test-user-id',
     };
@@ -172,7 +174,7 @@ describe('register()', () => {
 
     const data = {
       ...body,
-      appkey: 'test-appkey',
+      appkey: APP_KEY,
     };
 
     try {
@@ -184,7 +186,7 @@ describe('register()', () => {
   });
 });
 
-describe('When testing mfaRegister()', () => {
+describe('mfaRegister()', () => {
   it('should throw error if apiKey empty', async () => {
     const data = {
       countryCode: '+96',
@@ -198,7 +200,7 @@ describe('When testing mfaRegister()', () => {
     }
   });
 
-  it('should throw error if required data empty', async () => {
+  it('should throw error if country code or phone number is empty', async () => {
     const data = {
       countryCode: '+96',
       number: '',
@@ -230,7 +232,7 @@ describe('When testing mfaRegister()', () => {
 });
 
 describe('When testing mfaSMS()', () => {
-  it('should throw error if required data empty', async () => {
+  it('should throw error if APIKEY is missing', async () => {
     const sdk = new PracteraSDK(API_URL);
     try {
       await sdk.mfaSMS();
@@ -260,7 +262,7 @@ describe('When testing mfaVerify()', () => {
     }
   });
 
-  it('should throw error if required data empty', async () => {
+  it('should throw error if verification code is empty', async () => {
     const data = {
       code: ''
     };
@@ -289,7 +291,7 @@ describe('When testing mfaVerify()', () => {
 });
 
 describe('When testing getCustomConfig()', () => {
-  it('should throw error if required data empty', async () => {
+  it('should throw error if domain is empty', async () => {
     const data = {
       domain: ''
     };
