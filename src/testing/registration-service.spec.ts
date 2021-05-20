@@ -1,4 +1,5 @@
 import { mocked } from 'ts-jest/utils';
+import { DUMMY_PASSWORD } from './mock-data';
 
 import { makePostApiCall } from '../services/request/request-service';
 jest.mock('../services/request/request-service');
@@ -43,10 +44,9 @@ describe('registration-service', () => {
 
 	describe('register()', () => {
 		it('should call request service with full url and data', () => {
-      const password = 'dummy_sample';
       mockedCall.mockClear();
 			register(apiurl, apiKey, appkey, {
-        password,
+        password: DUMMY_PASSWORD,
         user_id: 12345,
         key: '12345',
       });
