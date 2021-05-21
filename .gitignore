@@ -5,3 +5,5 @@ coverage/
 *.code-workspace
 /lib
 .sonarlint
+practera-sdk.sublime-project
+practera-sdk.sublime-workspace

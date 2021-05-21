@@ -29,7 +29,9 @@ function createRequestConfig(httpOptions: any) : AxiosRequestConfig {
   }
   return {
     timeout: 20000,
-    headers: Object.assign({'Content-Type': 'application/json'}, httpOptions.headers),
+    headers: Object.assign({
+      'Content-Type': 'application/json',
+    }, httpOptions.headers),
     params: httpOptions.params
   };
 }
