@@ -48,7 +48,14 @@ export class PracteraSDK {
    * }
    * @returns promise
    */
-  login(data: any): Promise<any> {
+  login(data: {
+    email: string;
+    password: string;
+  }): Promise<any> {
+    if (_.isEmpty(data.email) || _.isEmpty(data.password)) {
+      throw new Error('Email and password must not be empty.');
+    }
+
     return login(this.apiUrl, data);
   }
 
@@ -62,6 +69,9 @@ export class PracteraSDK {
    * @returns promise
    */
   forgotPassword(data: any): Promise<any> {
+    if (_.isEmpty(data.email) || _.isEmpty(data.globalLoginUrl)) {
+      throw new Error('Email and globalLoginUrl must not be empty.');
+    }
     return forgotPassword(this.apiUrl, data);
   }
 
@@ -73,10 +83,17 @@ export class PracteraSDK {
    * }
    * @returns promise
    */
-  resetPassword(data: any): Promise<any> {
+  resetPassword(data: {
+    password: string;
+  }): Promise<any> {
     if (_.isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
+
+    if (_.isEmpty(data.password)) {
+      throw new Error('Password cannot be empty.');
+    }
+
     return resetPassword(this.apiUrl, this.apiKey, {
       password: data.password,
     });

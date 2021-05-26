@@ -53,7 +53,7 @@ function createResetDirectLinks(globalLoginUrl: string): any {
  * }
  * @returns promise
  */
-export function login(apiUrl: string, body: any): any {
+export function login(apiUrl: string, body: any): Promise<any> {
   const fullUrl = createFullApiUrl(apiUrl, api.login);
   return makePostApiCall(fullUrl, body);
 }
