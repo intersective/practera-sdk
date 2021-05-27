@@ -23,7 +23,7 @@ describe('When testing login()', () => {
       email: 'testUser',
       password: DUMMY_PASSWORD
     };
-    const sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
+    const sdk = new PracteraSDK(API_URL);
     sdk.login(data);
     expect(loginService.login).toHaveBeenCalledWith(API_URL, data);
   });
@@ -33,9 +33,9 @@ describe('When testing login()', () => {
       email: '',
       password: DUMMY_PASSWORD
     };
-    const sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
+    const sdk = new PracteraSDK(API_URL);
     try {
-      const result = () => sdk.login(data);
+      await sdk.login(data);
     } catch (err) {
       expect(err.message).toEqual('Email and password must not be empty.');
     }

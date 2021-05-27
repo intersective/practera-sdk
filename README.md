@@ -22,6 +22,8 @@ initialising `PracteraSDK` object.
 
 ```ts
 const practeraSDK = new PracteraSDK('apiUrl');
+// or
+const practeraSDK = new PracteraSDK('apiUrl', 'apikey'); // when SDK rely on apikey for API calls
 ```
 
 | Property name | Description |
@@ -87,7 +89,7 @@ Reset password service is calling `/user` endpoint of the API URL passed when SD
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl');
+const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
 
 let data = {
    password: '123456',
@@ -111,7 +113,7 @@ Purpose: Activate/register user account with user-specified password.
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl');
+const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
 
 let data = {
   appkey: 'sample-appkey',
@@ -138,7 +140,7 @@ Purpose: verify current user registration session
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl');
+const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
 
 let data = {
   appkey: 'sample-appkey',
@@ -164,7 +166,7 @@ MFA Register service is calling `/mfa/register` endpoint of the API URL passed w
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl');
+const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
 
 let data = {
    countryCode: '+94',
@@ -189,7 +191,7 @@ MFA verify service is calling `/mfa/verify` endpoint of the API URL passed when 
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl');
+const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
 
 let data = {
    code: '123456',

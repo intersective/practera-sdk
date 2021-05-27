@@ -2,8 +2,9 @@ import { createFullApiUrl } from '../services/utils/utils-service';
 
 describe('When testing createFullApiUrl()', (): void => {
   it('should return full API URL', (): void => {
-    const fullUrl: string = createFullApiUrl('testAPI.com/', 'login');
-    expect(fullUrl).toEqual('testAPI.com/login');
+    const domain = 'testAPI.com';
+    const fullUrl: string = createFullApiUrl(`https://${domain}/`, 'login');
+    expect(fullUrl).toEqual(`https://${domain}/login`);
   });
   it('should console error if apiUrl empty', (): void => {
     spyOn(console, 'error');
