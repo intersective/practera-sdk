@@ -12,38 +12,83 @@ const TEST_EMAIL = 'test@email.com';
 const APIKEY_WARNING = 'PracteraSDK instance must be instantiated with apikey.';
 
 describe('When testing login()', () => {
-  it('should call login service with correct data', () => {
+  beforeEach(() => {
     spyOn(loginService,'login').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
+  });
+
+  it('should call login service with correct data', () => {
     const data = {
-      userName: 'testUser',
+      email: 'testUser',
       password: DUMMY_PASSWORD
     };
     const sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
     sdk.login(data);
     expect(loginService.login).toHaveBeenCalledWith(API_URL, data);
   });
+
+  it('should throw error when required data N/A', async () => {
+    const data = {
+      email: '',
+      password: DUMMY_PASSWORD
+    };
+    const sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
+    try {
+      const result = () => sdk.login(data);
+    } catch (err) {
+      expect(err.message).toEqual('Email and password must not be empty.');
+    }
+  });
 });
 
 describe('When testing forgotPassword()', () => {
-  it('should call login service with correct data', () => {
-    spyOn(loginService,'forgotPassword').and.returnValue(new Promise<void>((resolve, reject) => {
+  let sdk: PracteraSDK;
+  beforeAll(() => {
+    spyOn(loginService, 'forgotPassword').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
+    sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
+  });
+
+  it('should call login service with correct data', () => {
     const data = {
       email: 'abcd@test.com',
       globalLoginUrl: 'https://login.practera.com'
     };
-    const sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
     sdk.forgotPassword(data);
     expect(loginService.forgotPassword).toHaveBeenCalledWith(API_URL, data);
+  });
+
+  it('should throw error if email or/and globalLoginUrl are missing', async () => {
+    const WARNING_MSG = 'Email and globalLoginUrl must not be empty.';
+    const testData = async (data: any) => {
+      try {
+        await sdk.forgotPassword(data);
+      } catch (err) {
+        expect(err.message).toEqual(WARNING_MSG);
+      }
+    };
+
+    const data1 = {
+      email: '',
+      globalLoginUrl: DUMMY_PASSWORD
+    };
+
+    const data2 = {
+      email: 'test@emai.com',
+      globalLoginUrl: ''
+    };
+    testData(data1);
+    testData(data2);
   });
 });
 
 describe('When testing resetPassword()', () => {
+  let sdk: PracteraSDK;
+
   it('should throw error if apiKey not provided in constructor', async () => {
-    const sdk = new PracteraSDK(API_URL);
+    sdk = new PracteraSDK(API_URL);
 
     try {
       await sdk.resetPassword({ password: DUMMY_PASSWORD });
@@ -53,6 +98,8 @@ describe('When testing resetPassword()', () => {
   });
 
   it('should call user service with correct data', () => {
+    sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
+
     spyOn(loginService,'resetPassword').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
@@ -62,9 +109,20 @@ describe('When testing resetPassword()', () => {
     const data = {
       password: DUMMY_PASSWORD,
     };
-    const sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
     sdk.resetPassword(data);
     expect(loginService.resetPassword).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY, body);
+  });
+
+  it('should throw error if password is not provided', async () => {
+    sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
+
+    try {
+      await sdk.resetPassword({
+        password: ''
+      });
+    } catch (err) {
+      expect(err.message).toEqual('Password cannot be empty.');
+    }
   });
 });
 
