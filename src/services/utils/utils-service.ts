@@ -12,10 +12,15 @@ export const createFullApiUrl = (apiUrl: string, endPoint: string): string => {
 };
 
 /**
- * Given a domain and endpoint string, return a correctly formatted url string
+ * Given a domain and endpoint string, return an absolute url formatted string
+ *
  * e.g.
  * test.practera.com - login => https://test.practera.com/login
  *
+ * @name urlFormatter
+ * @param {string} domain url
+ * @param {string} endpoint optional relative url
+ * @return {string}   combination of scheme+domain+endpoint
  */
 export const urlFormatter = (domain: string, endpoint?: string): string => {
   // always need http as prefix
