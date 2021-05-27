@@ -18,7 +18,7 @@ describe('registration-service', () => {
         email: 'test@email.com',
         key: 'test'
       });
-      expect(mockedCall).toHaveBeenCalledWith("test.com//api/verification_codes.json", {
+      expect(mockedCall).toHaveBeenCalledWith("https://test.com/api/verification_codes.json", {
         "email": "test@email.com",
         "key": "test"
       }, {
