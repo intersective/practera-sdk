@@ -2,6 +2,26 @@
 
 This is the sdk of practera. Practera SDK can call different endpoints of API URL passed to the SDK. SDK will always returning promise.
 
+## Health
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=intersective_practera-sdk&metric=alert_status&token=19814e72d32dd8ab193bb168320116a41f84beb3)](https://sonarcloud.io/dashboard?id=intersective_practera-sdk) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=intersective_practera-sdk&metric=coverage&token=19814e72d32dd8ab193bb168320116a41f84beb3)](https://sonarcloud.io/dashboard?id=intersective_practera-sdk) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=intersective_practera-sdk&metric=security_rating&token=19814e72d32dd8ab193bb168320116a41f84beb3)](https://sonarcloud.io/dashboard?id=intersective_practera-sdk) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=intersective_practera-sdk&metric=sqale_rating&token=19814e72d32dd8ab193bb168320116a41f84beb3)](https://sonarcloud.io/dashboard?id=intersective_practera-sdk) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=intersective_practera-sdk&metric=bugs&token=19814e72d32dd8ab193bb168320116a41f84beb3)](https://sonarcloud.io/dashboard?id=intersective_practera-sdk) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=intersective_practera-sdk&metric=code_smells&token=19814e72d32dd8ab193bb168320116a41f84beb3)](https://sonarcloud.io/dashboard?id=intersective_practera-sdk)
+
+## Table of Contents
+
+- [Install](#install)
+- [Import](#import)
+    - [TypeScript](#typescript)
+- [Servicers](#servicers)
+    - [Login](#login)
+    - [Forgot password](#forgot-password)
+    - [Reset password](#reset-password)
+    - [Account Registration/Activation](#account-registrationactivation)
+    - [Account Registration Verification](#account-registration-verification)
+    - [MFA Register](#mfa-register)
+    - [MFA Verify](#mfa-verify)
+    - [MFA SMS](#mfa-sms)
+    - [Get Custom Config](#get-custom-config)
+
 ## Install
 
 ``` cmd
@@ -27,10 +47,10 @@ const practeraSDK = new PracteraSDK('apiUrl', 'apikey'); // when SDK rely on api
 ```
 
 | Property name | Description |
-| :------------ | :----------- |
-| apiUrl | When SDK initialising need to pass the base API URL SDK need call. for ex:- `https://api.test.practera.com/`|
+| :------------ | :----------------------------------------------------------------------------------------------------------- |
+| apiUrl        | When SDK initialising need to pass the base API URL SDK need call. for ex:- `https://api.test.practera.com/` |
 
-## servicers
+## Servicers
 
 ### Login
 
@@ -92,8 +112,7 @@ import { PracteraSDK } from '@practera/practera-sdk';
 const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
 
 let data = {
-   password: '123456',
-   apiKey: 'xzcv345'
+   password: '123456'
 }
 
 practeraSDK.resetPassword(data).then(
@@ -107,7 +126,8 @@ practeraSDK.resetPassword(data).then(
 ```
 
 ### Account Registration/Activation
-User account registration/activation uses `/registration_details` endpoint. 
+
+User account registration/activation uses `/registration_details` endpoint.
 Purpose: Activate/register user account with user-specified password.
 
 ```ts
@@ -117,7 +137,6 @@ const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
 
 let data = {
   appkey: 'sample-appkey',
-  apiKey: 'sample-apikey',
   password: 'sample-password',
   user_id: 12345,
   key: 'sample-key',
@@ -134,6 +153,7 @@ practeraSDK.register(data).then(
 ```
 
 ### Account Registration Verification
+
 User account registration verification uses `/verification_codes` endpoint.
 Purpose: verify current user registration session
 
@@ -144,8 +164,7 @@ const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
 
 let data = {
   appkey: 'sample-appkey',
-  apiKey: 'sample-apikey',
-  email: 'sample-password',
+  email: 'sample-email',
   key: 'sample-key',
 };
 
@@ -170,8 +189,7 @@ const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
 
 let data = {
    countryCode: '+94',
-   number: '123456',
-   apiKey: 'xzcv345'
+   number: '123456'
 }
 
 practeraSDK.mfaRegister(data).then(
@@ -194,8 +212,7 @@ import { PracteraSDK } from '@practera/practera-sdk';
 const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
 
 let data = {
-   code: '123456',
-   apiKey: 'xzcv345'
+   code: '123456'
 }
 
 practeraSDK.mfaVerify(data).then(
@@ -215,13 +232,9 @@ MFA sms service is calling `/mfa/sms` endpoint of the API URL passed when SDK in
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl');
+const practeraSDK = new PracteraSDK('apiUrl', 'apiKey');
 
-let data = {
-   apiKey: 'xzcv345'
-}
-
-practeraSDK.mfaSMS(data).then(
+practeraSDK.mfaSMS().then(
     (response) => {
         console.log('sms send with verification code.');
     },
