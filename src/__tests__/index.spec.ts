@@ -1,9 +1,9 @@
 import { mocked } from 'ts-jest/utils';
 import { PracteraSDK } from '../index';
 import { DUMMY_PASSWORD } from './mock-data';
-import * as loginService from '../data-sources/login-api';
+import * as loginAPI from '../data-sources/login-api';
 
-import * as registrationService from '../data-sources/core-api';
+import * as coreAPI from '../data-sources/core-api';
 jest.mock('../data-sources/core-api.ts');
 const SAMPLE_APIKEY = 'sample-apikey';
 const API_URL = 'testAPI.com/';
@@ -13,7 +13,7 @@ const APIKEY_WARNING = 'PracteraSDK instance must be instantiated with apikey.';
 
 describe('When testing login()', () => {
   beforeEach(() => {
-    spyOn(loginService,'login').and.returnValue(new Promise<void>((resolve, reject) => {
+    spyOn(loginAPI,'login').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
   });
@@ -25,7 +25,7 @@ describe('When testing login()', () => {
     };
     const sdk = new PracteraSDK(API_URL);
     sdk.login(data);
-    expect(loginService.login).toHaveBeenCalledWith(API_URL, data);
+    expect(loginAPI.login).toHaveBeenCalledWith(API_URL, data);
   });
 
   it('should throw error when required data N/A', async () => {
@@ -45,7 +45,7 @@ describe('When testing login()', () => {
 describe('When testing forgotPassword()', () => {
   let sdk: PracteraSDK;
   beforeAll(() => {
-    spyOn(loginService, 'forgotPassword').and.returnValue(new Promise<void>((resolve, reject) => {
+    spyOn(loginAPI, 'forgotPassword').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
     sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
@@ -57,7 +57,7 @@ describe('When testing forgotPassword()', () => {
       globalLoginUrl: 'https://login.practera.com'
     };
     sdk.forgotPassword(data);
-    expect(loginService.forgotPassword).toHaveBeenCalledWith(API_URL, data);
+    expect(loginAPI.forgotPassword).toHaveBeenCalledWith(API_URL, data);
   });
 
   it('should throw error if email or/and globalLoginUrl are missing', async () => {
@@ -100,7 +100,7 @@ describe('When testing resetPassword()', () => {
   it('should call user service with correct data', () => {
     sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
 
-    spyOn(loginService,'resetPassword').and.returnValue(new Promise<void>((resolve, reject) => {
+    spyOn(loginAPI,'resetPassword').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
     const body = {
@@ -110,7 +110,7 @@ describe('When testing resetPassword()', () => {
       password: DUMMY_PASSWORD,
     };
     sdk.resetPassword(data);
-    expect(loginService.resetPassword).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY, body);
+    expect(loginAPI.resetPassword).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY, body);
   });
 
   it('should throw error if password is not provided', async () => {
@@ -160,7 +160,7 @@ describe('verifyRegistration()', () => {
   it('should call verify() from registration-service with correct data', () => {
     sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
 
-    mocked(registrationService.verify).mockImplementation((): Promise<any> => {
+    mocked(coreAPI.verify).mockImplementation((): Promise<any> => {
       return Promise.resolve(true);
     });
 
@@ -175,14 +175,14 @@ describe('verifyRegistration()', () => {
     };
 
     sdk.verifyRegistration(data);
-    expect(registrationService.verify).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY, data.appkey, body);
+    expect(coreAPI.verify).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY, data.appkey, body);
   });
 });
 
 describe('register()', () => {
   let sdk: any;
   beforeEach(() => {
-    mocked(registrationService.register).mockClear();
+    mocked(coreAPI.register).mockClear();
   });
 
   it('should throw error when apiKey not provided in constructor', async () => {
@@ -202,7 +202,7 @@ describe('register()', () => {
   it('should throw error if provided parameters are wrong', async () => {
     sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
 
-    mocked(registrationService.register).mockImplementation((): Promise<any> => {
+    mocked(coreAPI.register).mockImplementation((): Promise<any> => {
       return Promise.resolve(true);
     });
 
@@ -221,7 +221,7 @@ describe('register()', () => {
   it('should call register() from registration-service with correct data', async () => {
     sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
 
-    mocked(registrationService.register).mockImplementation((): Promise<any> => {
+    mocked(coreAPI.register).mockImplementation((): Promise<any> => {
       return Promise.resolve(true);
     });
 
@@ -237,7 +237,7 @@ describe('register()', () => {
 
     try {
       await sdk.register(data);
-      expect(mocked(registrationService.register)).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY, data.appkey, body);
+      expect(mocked(coreAPI.register)).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY, data.appkey, body);
     } catch (err) {
       console.log('error::', err);
     }
@@ -272,7 +272,7 @@ describe('mfaRegister()', () => {
   });
 
   it('should call mfa register service with correct data', () => {
-    spyOn(loginService,'mfaRegister').and.returnValue(new Promise<void>((resolve, reject) => {
+    spyOn(loginAPI,'mfaRegister').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
     const body = {
@@ -285,7 +285,7 @@ describe('mfaRegister()', () => {
     };
     const sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
     sdk.mfaRegister(data);
-    expect(loginService.mfaRegister).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY, body);
+    expect(loginAPI.mfaRegister).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY, body);
   });
 });
 
@@ -300,12 +300,12 @@ describe('When testing mfaSMS()', () => {
   });
 
   it('should call mfa sms service with correct data', () => {
-    spyOn(loginService,'mfaSMS').and.returnValue(new Promise<void>((resolve, reject) => {
+    spyOn(loginAPI,'mfaSMS').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
     const sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
     sdk.mfaSMS();
-    expect(loginService.mfaSMS).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY);
+    expect(loginAPI.mfaSMS).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY);
   });
 });
 
@@ -333,7 +333,7 @@ describe('When testing mfaVerify()', () => {
   });
 
   it('should call mfa verify service with correct data', () => {
-    spyOn(loginService, 'mfaVerify').and.returnValue(new Promise<void>((resolve, reject) => {
+    spyOn(loginAPI, 'mfaVerify').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
     const data = {
@@ -344,11 +344,22 @@ describe('When testing mfaVerify()', () => {
     };
     const sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
     sdk.mfaVerify(data);
-    expect(loginService.mfaVerify).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY, body);
+    expect(loginAPI.mfaVerify).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY, body);
   });
 });
 
 describe('When testing getCustomConfig()', () => {
+  it('should throw error if apiKey not provided in constructor', async () => {
+    const sdk = new PracteraSDK(API_URL);
+    const data = {
+      domain: 'https://app.practera.com'
+    };
+    try {
+      await sdk.getCustomConfig(data);
+    } catch(error) {
+      expect(error.message).toEqual(APIKEY_WARNING);
+    }
+  });
   it('should throw error if domain is empty', async () => {
     const data = {
       domain: ''
@@ -362,7 +373,7 @@ describe('When testing getCustomConfig()', () => {
   });
 
   it('should call experience list service with correct data', () => {
-    spyOn(loginService,'getConfig').and.returnValue(new Promise<void>((resolve, reject) => {
+    spyOn(coreAPI,'getConfig').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
     const data = {
@@ -370,6 +381,6 @@ describe('When testing getCustomConfig()', () => {
     };
     const sdk = new PracteraSDK(API_URL, SAMPLE_APIKEY);
     sdk.getCustomConfig(data);
-    expect(loginService.getConfig).toHaveBeenCalledWith(API_URL, data);
+    expect(coreAPI.getConfig).toHaveBeenCalledWith(API_URL, data);
   });
 });

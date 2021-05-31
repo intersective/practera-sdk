@@ -1,4 +1,4 @@
-import { login, forgotPassword, resetPassword, mfaRegister, mfaSMS, mfaVerify, getConfig } from '../data-sources/login-api';
+import { login, forgotPassword, resetPassword, mfaRegister, mfaSMS, mfaVerify } from '../data-sources/login-api';
 import * as requestService from '../request';
 import * as utilService from '../utils';
 import { DUMMY_PASSWORD } from './mock-data';
@@ -172,46 +172,6 @@ describe('When testing mfaVerify()', () => {
       headers: {
         apiKey: apiKey
       }
-    });
-  });
-});
-
-describe('When testing getConfig()', () => {
-  it('should throw error if api url is empty', async () => {
-    const data = {
-      domain: 'https://app.practera.com'
-    }
-    try {
-      await getConfig('', data);
-    } catch (error) {
-      expect(error.message).toEqual('API Url can not be empty');
-    }
-  });
-
-  it('should throw error if domain is empty', async () => {
-    const data = {
-      domain: '',
-    };
-
-    try {
-      await getConfig(API_URL, data);
-    } catch (error) {
-      expect(error.message).toEqual('Tech Error: Domain is compulsory!');
-    }
-  });
-
-  it('should call experience list service with full API URL and data', () => {
-    spyOn(utilService,'createFullApiUrl').and.returnValue('testAPI.com/api/v2/plan/experience/list');
-    spyOn(requestService,'makeGetApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
-      resolve();
-    }));
-    const data = {
-      domain: 'https://app.practera.com'
-    }
-    getConfig('testAPI.com', data);
-    expect(utilService.createFullApiUrl).toHaveBeenCalledWith('testAPI.com', '/api/v2/plan/experience/list');
-    expect(requestService.makeGetApiCall).toHaveBeenCalledWith('testAPI.com/api/v2/plan/experience/list', {
-      params: data
     });
   });
 });

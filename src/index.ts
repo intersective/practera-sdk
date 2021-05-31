@@ -4,24 +4,14 @@ import {
   resetPassword,
   mfaRegister,
   mfaSMS,
-  mfaVerify,
-  getConfig,
-  ConfigParams
+  mfaVerify
 } from "./data-sources/login-api";
 import {
   register,
-  verify as verifyRegistration
+  verify as verifyRegistration,
+  getConfig
 } from './data-sources/core-api';
 import { isEmpty } from './utils';
-
-interface MFARigisterParams {
-  countryCode: string;
-  number: string;
-}
-
-interface MFAVerifyParams {
-  code: string;
-}
 
 const APIKEY_WARNING = 'PracteraSDK instance must be instantiated with apikey.';
 
@@ -108,12 +98,17 @@ export class PracteraSDK {
    * {
    *  appkey: 'abcd1234',
    *  password: '1234',
-   *  user_id: 'asdhkj',
-   *  key: 12345,
+   *  user_id: 120005,
+   *  key: 'wesf2323',
    * }
    * @returns promise
    */
-  register(data: any): Promise<any> {
+  register(data: {
+    appkey: string;
+    password: string;
+    user_id: number;
+    key: string;
+  }): Promise<any> {
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
@@ -136,7 +131,11 @@ export class PracteraSDK {
    * }
    * @returns promise
    */
-  verifyRegistration(data: any): Promise<any> {
+  verifyRegistration(data: {
+    appkey: string;
+    email: string;
+    key: string;
+  }): Promise<any> {
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
@@ -157,7 +156,10 @@ export class PracteraSDK {
    * }
    * @returns promise
    */
-  mfaRegister(data: MFARigisterParams): Promise<any> {
+  mfaRegister(data: {
+    countryCode: string;
+    number: string;
+  }): Promise<any> {
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
@@ -191,7 +193,9 @@ export class PracteraSDK {
    * }
    * @returns promise
    */
-  mfaVerify(data: MFAVerifyParams): Promise<any> {
+  mfaVerify(data: {
+    code: string;
+  }): Promise<any> {
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
@@ -213,7 +217,12 @@ export class PracteraSDK {
    * }
    * @returns promise
    */
-  getCustomConfig(data: ConfigParams): Promise<any> {
+  getCustomConfig(data: {
+    domain: string;
+  }): Promise<any> {
+    if (isEmpty(this.apiKey)) {
+      throw new Error(APIKEY_WARNING);
+    }
     if (isEmpty(data.domain)) {
       throw new Error('Tech Error: Domain is compulsory!');
     }

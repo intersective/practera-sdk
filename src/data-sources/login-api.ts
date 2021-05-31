@@ -1,4 +1,4 @@
-import { makeGetApiCall, makePostApiCall, makePutApiCall } from '../request';
+import { makePostApiCall, makePutApiCall } from '../request';
 import { createFullApiUrl, isEmpty } from '../utils';
 
 interface MFARigisterParams {
@@ -10,17 +10,12 @@ interface MFAVirifyParams {
   code: string;
 }
 
-export interface ConfigParams {
-  domain: string;
-}
-
 /**
  * api
  * @description list of api endpoint involved in this service
  * {Object}
  */
 const api = {
-  getConfig: '/api/v2/plan/experience/list',
   login: 'login',
   forgotPassword: 'forgotPassword',
   resetPassword: 'user',
@@ -32,7 +27,6 @@ const api = {
   getStack: 'stack'
 };
 
-const apiUrlError = 'API Url can not be empty';
 const apiUrlApiKeyError = 'API Url and API key can not be empty';
 
 function createResetDirectLinks(globalLoginUrl: string): any {
@@ -163,27 +157,5 @@ export function mfaVerify(apiUrl: string, apiKey: string, body: MFAVirifyParams)
     headers: {
       apiKey: apiKey
     }
-  });
-}
-
-/**
- * This method will call experience list service to get custom config of the experience.
- * @param apiUrl string - actual API URL.
- * @param data json object - params need to pass to the api call
- * {
- *  domain: 'https://app.practera.com'
- * }
- * @returns promise
- */
-export function getConfig(apiUrl: string, data: ConfigParams): Promise<any> {
-  if (isEmpty(apiUrl)) {
-    throw new Error(apiUrlError);
-  }
-  if (isEmpty(data.domain)) {
-    throw new Error('Tech Error: Domain is compulsory!');
-  }
-  const fullUrl = createFullApiUrl(apiUrl, api.getConfig);
-  return makeGetApiCall(fullUrl, {
-    params: data
   });
 }

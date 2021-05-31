@@ -1,9 +1,9 @@
 import { mocked } from 'ts-jest/utils';
 import { DUMMY_PASSWORD } from './mock-data';
 
-import { makePostApiCall } from '../request';
+import { makePostApiCall, makeGetApiCall } from '../request';
 jest.mock('../request');
-import { verify, register } from '../data-sources/core-api';
+import { verify, register, getConfig } from '../data-sources/core-api';
 
 describe('registration-service', () => {
   const apiurl = 'test.com/';
@@ -67,4 +67,31 @@ describe('registration-service', () => {
     });
 	});
 
+});
+
+describe('When testing getConfig()', () => {
+  const API_URL = 'testAPI.com/';
+  const mockedCall = mocked(makeGetApiCall, true);
+
+  it('should throw error if domain is empty', async () => {
+    mockedCall.mockClear();
+    const data = {
+      domain: '',
+    };
+    const call = () => {
+      getConfig(API_URL, data);
+    };
+    expect(call).toThrow('Tech Error: Domain is compulsory!');
+  });
+
+  it('should call experience list service with full API URL and data', () => {
+    mockedCall.mockClear();
+    const data = {
+      domain: 'https://app.practera.com',
+    };
+    getConfig(API_URL, data);
+    expect(mockedCall).toHaveBeenCalledWith('https://testAPI.com/api/v2/plan/experience/list', {
+      params: data
+    });
+  });
 });

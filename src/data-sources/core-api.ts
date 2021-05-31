@@ -1,4 +1,4 @@
-import { makePostApiCall } from '../request';
+import { makePostApiCall, makeGetApiCall } from '../request';
 import { createFullApiUrl, isEmpty } from '../utils';
 
 interface Registration {
@@ -12,6 +12,10 @@ interface VerifyRegistration {
   key: string;
 }
 
+interface ConfigParams {
+  domain: string;
+}
+
 /**
  * api
  * @description list of api endpoint involved in this service
@@ -20,6 +24,7 @@ interface VerifyRegistration {
 const api = {
   register: '/api/registration_details.json',
   verify: '/api/verification_codes.json',
+  getConfig: '/api/v2/plan/experience/list'
 };
 
 /**
@@ -67,5 +72,24 @@ export function verify(apiUrl: string, apiKey: string, appkey: string, body: Ver
       apiKey,
       appkey,
     }
+  });
+}
+
+/**
+ * This method will call experience list service to get custom config of the experience.
+ * @param apiUrl string - actual API URL.
+ * @param data json object - params need to pass to the api call
+ * {
+ *  domain: 'https://app.practera.com'
+ * }
+ * @returns promise
+ */
+export function getConfig(apiUrl: string, data: ConfigParams): Promise<any> {
+  if (isEmpty(data.domain)) {
+    throw new Error('Tech Error: Domain is compulsory!');
+  }
+  const fullUrl = createFullApiUrl(apiUrl, api.getConfig);
+  return makeGetApiCall(fullUrl, {
+    params: data
   });
 }
