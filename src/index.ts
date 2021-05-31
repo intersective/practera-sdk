@@ -14,18 +14,49 @@ import {
 import { isEmpty } from './utils';
 
 const APIKEY_WARNING = 'PracteraSDK instance must be instantiated with apikey.';
+const LOGIN_API_URL_WARNING = 'LOGIN API URL required to use this service.';
+const CORE_API_URL_WARNING = 'CORE API URL required to use this service.';
+const LOGIN_APP_URL_WARNING = 'LOGIN APP URL required to use this service.';
+
+interface ConstructorParams {
+  loginApiUrl?: string;
+  coreApiUrl?: string;
+  chatApiUrl?: string;
+  graphqlUrl?: string;
+  apiKey?: string;
+  loginAppUrl?: string;
+}
 
 export class PracteraSDK {
-  // Actual API URL pass to the package object.
-  protected apiUrl: string;
   protected apiKey = '';
+  protected loginAppUrl = '';
+  protected loginApiUrl = '';
+  protected coreApiUrl = '';
 
-  constructor(apiUrl: string, apiKey?: string) {
-    this.apiUrl = apiUrl;
+  /**
+   * Initicalising the Practera SDK
+   * @param {ConstructorParams} params parameters that can pass through constructor
+   */
+  constructor(params: ConstructorParams) {
+    this.useConstructorParams(params);
+  }
 
-    // make apiKey optional, not every use case need apiKey
-    if (apiKey) {
-      this.apiKey = apiKey;
+  /**
+   * Assign values to instance variables if they passed.
+   * @param {ConstructorParams} params parameters that can pass through constructor
+   */
+  useConstructorParams(params: ConstructorParams): void {
+    if (params.loginApiUrl) {
+      this.loginApiUrl = params.loginApiUrl;
+    }
+    if (params.coreApiUrl) {
+      this.coreApiUrl = params.coreApiUrl;
+    }
+    if (params.apiKey) {
+      this.apiKey = params.apiKey;
+    }
+    if (params.loginAppUrl) {
+      this.loginAppUrl = params.loginAppUrl;
     }
   }
 
@@ -42,30 +73,40 @@ export class PracteraSDK {
     username: string;
     password: string;
   }): Promise<any> {
+    if (isEmpty(this.loginApiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
+    }
     if (isEmpty(data.username) || isEmpty(data.password)) {
       throw new Error('username and password cannot be empty.');
     }
 
-    return login(this.apiUrl, data);
+    return login(this.loginApiUrl, data);
   }
 
   /**
    * this method will call forgot password api to send password rest email to provided email address.
    * @param data json object - user registered email address and global login url
    * {
-   *  email: 'abcd@gmail.com',
-   *  globalLoginUrl: 'https://login.practera.com'
+   *  email: 'abcd@gmail.com'
    * }
    * @returns promise
    */
   forgotPassword(data: {
     email: string;
   }): Promise<any> {
-    // @TODO need to check global login passed from constructor
+    if (isEmpty(this.loginApiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
+    }
+    if (isEmpty(this.loginAppUrl)) {
+      throw new Error(LOGIN_APP_URL_WARNING);
+    }
     if (isEmpty(data.email)) {
       throw new Error('Email cannot be empty.');
     }
-    return forgotPassword(this.apiUrl, data);
+    return forgotPassword(this.loginApiUrl, {
+      email: data.email,
+      globalLoginUrl: this.loginAppUrl
+    });
   }
 
   /**
@@ -79,6 +120,9 @@ export class PracteraSDK {
   resetPassword(data: {
     password: string;
   }): Promise<any> {
+    if (isEmpty(this.loginApiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
+    }
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
@@ -87,7 +131,7 @@ export class PracteraSDK {
       throw new Error('Password cannot be empty.');
     }
 
-    return resetPassword(this.apiUrl, this.apiKey, {
+    return resetPassword(this.loginApiUrl, this.apiKey, {
       password: data.password,
     });
   }
@@ -109,12 +153,15 @@ export class PracteraSDK {
     user_id: number;
     key: string;
   }): Promise<any> {
+    if (isEmpty(this.coreApiUrl)) {
+      throw new Error(CORE_API_URL_WARNING);
+    }
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
 
     const { password, user_id, key } = data;
-    return register(this.apiUrl, this.apiKey, data.appkey, {
+    return register(this.coreApiUrl, this.apiKey, data.appkey, {
       password,
       user_id,
       key,
@@ -136,12 +183,15 @@ export class PracteraSDK {
     email: string;
     key: string;
   }): Promise<any> {
+    if (isEmpty(this.coreApiUrl)) {
+      throw new Error(CORE_API_URL_WARNING);
+    }
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
 
     const { email, key } = data;
-    return verifyRegistration(this.apiUrl, this.apiKey, data.appkey, {
+    return verifyRegistration(this.coreApiUrl, this.apiKey, data.appkey, {
       email,
       key,
     });
@@ -160,6 +210,9 @@ export class PracteraSDK {
     countryCode: string;
     number: string;
   }): Promise<any> {
+    if (isEmpty(this.loginApiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
+    }
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
@@ -168,7 +221,7 @@ export class PracteraSDK {
       throw new Error('Country code and phone number can not be empty.');
     }
 
-    return mfaRegister(this.apiUrl, this.apiKey, {
+    return mfaRegister(this.loginApiUrl, this.apiKey, {
       countryCode: data.countryCode,
       number: data.number,
     });
@@ -179,10 +232,13 @@ export class PracteraSDK {
    * @returns promise
    */
   mfaSMS(): Promise<any> {
+    if (isEmpty(this.loginApiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
+    }
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
-    return mfaSMS(this.apiUrl, this.apiKey);
+    return mfaSMS(this.loginApiUrl, this.apiKey);
   }
 
   /**
@@ -196,6 +252,9 @@ export class PracteraSDK {
   mfaVerify(data: {
     code: string;
   }): Promise<any> {
+    if (isEmpty(this.loginApiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
+    }
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
@@ -203,7 +262,7 @@ export class PracteraSDK {
       throw new Error('Verification code can not be empty');
     }
 
-    return mfaVerify(this.apiUrl, this.apiKey, {
+    return mfaVerify(this.loginApiUrl, this.apiKey, {
       code: data.code,
     });
   }
@@ -220,12 +279,13 @@ export class PracteraSDK {
   getCustomConfig(data: {
     domain: string;
   }): Promise<any> {
-    if (isEmpty(this.apiKey)) {
-      throw new Error(APIKEY_WARNING);
+    if (isEmpty(this.coreApiUrl)) {
+      throw new Error(CORE_API_URL_WARNING);
     }
     if (isEmpty(data.domain)) {
       throw new Error('Tech Error: Domain is compulsory!');
     }
-    return getConfig(this.apiUrl, data);
+    return getConfig(this.coreApiUrl, data);
   }
+
 }
