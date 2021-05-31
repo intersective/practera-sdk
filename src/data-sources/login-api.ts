@@ -1,5 +1,5 @@
-import { makeGetApiCall, makePostApiCall, makePutApiCall } from '../request/request-service';
-import { createFullApiUrl, isEmpty } from '../utils/utils-service';
+import { makeGetApiCall, makePostApiCall, makePutApiCall } from '../request';
+import { createFullApiUrl, isEmpty } from '../utils';
 
 interface MFARigisterParams {
   countryCode: string;

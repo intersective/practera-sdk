@@ -7,12 +7,12 @@ import {
   mfaVerify,
   getConfig,
   ConfigParams
-} from "./services/auth/auth-service";
+} from "./data-sources/login-api";
 import {
   register,
   verify as verifyRegistration
-} from './services/registration/registration-service';
-import { isEmpty } from './services/utils/utils-service';
+} from './data-sources/core-api';
+import { isEmpty } from './utils';
 
 interface MFARigisterParams {
   countryCode: string;
@@ -68,9 +68,12 @@ export class PracteraSDK {
    * }
    * @returns promise
    */
-  forgotPassword(data: any): Promise<any> {
-    if (isEmpty(data.email) || isEmpty(data.globalLoginUrl)) {
-      throw new Error('Email and globalLoginUrl cannot be empty.');
+  forgotPassword(data: {
+    email: string;
+  }): Promise<any> {
+    // @TODO need to check global login passed from constructor
+    if (isEmpty(data.email)) {
+      throw new Error('Email cannot be empty.');
     }
     return forgotPassword(this.apiUrl, data);
   }

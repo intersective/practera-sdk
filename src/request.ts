@@ -1,5 +1,5 @@
 import Axios, { AxiosRequestConfig } from 'axios';
-import { has } from '../utils/utils-service';
+import { has } from './utils';
 
 /**
  * This method will append headers and URL parameters to an API request.

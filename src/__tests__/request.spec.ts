@@ -1,4 +1,4 @@
-import { makeGetApiCall, makePostApiCall, makePutApiCall } from '../services/request/request-service';
+import { makeGetApiCall, makePostApiCall, makePutApiCall } from '../request';
 import Axios from 'axios';
 
 describe('When test makeGetApiCall()', (): void => {

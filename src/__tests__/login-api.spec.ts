@@ -1,6 +1,6 @@
-import { login, forgotPassword, resetPassword, mfaRegister, mfaSMS, mfaVerify, getConfig } from '../services/auth/auth-service';
-import * as requestService from '../services/request/request-service';
-import * as utilService from '../services/utils/utils-service';
+import { login, forgotPassword, resetPassword, mfaRegister, mfaSMS, mfaVerify, getConfig } from '../data-sources/login-api';
+import * as requestService from '../request';
+import * as utilService from '../utils';
 import { DUMMY_PASSWORD } from './mock-data';
 const API_URL = 'testAPI.com/';
 const API_WARNING = 'API Url and API key can not be empty';

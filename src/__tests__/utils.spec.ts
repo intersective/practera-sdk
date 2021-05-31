@@ -1,4 +1,4 @@
-import { createFullApiUrl, isEmpty, has } from '../services/utils/utils-service';
+import { createFullApiUrl, isEmpty, has } from '../utils';
 import _ from "lodash";
 
 describe('When testing createFullApiUrl()', (): void => {

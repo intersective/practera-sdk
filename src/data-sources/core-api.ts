@@ -1,5 +1,5 @@
-import { makePostApiCall } from '../request/request-service';
-import { createFullApiUrl, isEmpty } from '../utils/utils-service';
+import { makePostApiCall } from '../request';
+import { createFullApiUrl, isEmpty } from '../utils';
 
 interface Registration {
   password: string;

@@ -1,9 +1,9 @@
 import { mocked } from 'ts-jest/utils';
 import { DUMMY_PASSWORD } from './mock-data';
 
-import { makePostApiCall } from '../services/request/request-service';
-jest.mock('../services/request/request-service');
-import { verify, register } from '../services/registration/registration-service';
+import { makePostApiCall } from '../request';
+jest.mock('../request');
+import { verify, register } from '../data-sources/core-api';
 
 describe('registration-service', () => {
   const apiurl = 'test.com/';

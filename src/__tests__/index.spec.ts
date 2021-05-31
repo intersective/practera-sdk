@@ -1,10 +1,10 @@
 import { mocked } from 'ts-jest/utils';
 import { PracteraSDK } from '../index';
 import { DUMMY_PASSWORD } from './mock-data';
-import * as loginService from '../services/auth/auth-service';
+import * as loginService from '../data-sources/login-api';
 
-import * as registrationService from '../services/registration/registration-service';
-jest.mock('../services/registration/registration-service');
+import * as registrationService from '../data-sources/core-api';
+jest.mock('../data-sources/core-api.ts');
 const SAMPLE_APIKEY = 'sample-apikey';
 const API_URL = 'testAPI.com/';
 const APP_KEY = 'test-appkey';
@@ -61,7 +61,7 @@ describe('When testing forgotPassword()', () => {
   });
 
   it('should throw error if email or/and globalLoginUrl are missing', async () => {
-    const WARNING_MSG = 'Email and globalLoginUrl cannot be empty.';
+    const WARNING_MSG = 'Email cannot be empty.';
     const testData = async (data: any) => {
       try {
         await sdk.forgotPassword(data);
