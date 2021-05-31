@@ -1,6 +1,5 @@
 import { makeGetApiCall, makePostApiCall, makePutApiCall } from '../request/request-service';
-import { createFullApiUrl } from '../utils/utils-service';
-import _ from 'lodash';
+import { createFullApiUrl, isEmpty } from '../utils/utils-service';
 
 interface MFARigisterParams {
   countryCode: string;
@@ -105,7 +104,7 @@ export function resetPassword(apiUrl: string, apiKey: string, body: any): any {
  * @returns promise
  */
 export function mfaSMS(apiUrl: string, apiKey: string): any {
-  if (_.isEmpty(apiUrl) || _.isEmpty(apiKey)) {
+  if (isEmpty(apiUrl) || isEmpty(apiKey)) {
     throw new Error(apiUrlApiKeyError);
   }
   const fullUrl = createFullApiUrl(apiUrl, api.mfaSMS);
@@ -128,10 +127,10 @@ export function mfaSMS(apiUrl: string, apiKey: string): any {
  * @returns promise
  */
 export function mfaRegister(apiUrl: string, apiKey: string, body: MFARigisterParams): any {
-  if (_.isEmpty(apiUrl) || _.isEmpty(apiKey)) {
+  if (isEmpty(apiUrl) || isEmpty(apiKey)) {
     throw new Error(apiUrlApiKeyError);
   }
-  if (_.isEmpty(body.countryCode) || _.isEmpty(body.number)) {
+  if (isEmpty(body.countryCode) || isEmpty(body.number)) {
     throw new Error('Country code and phone number can not be empty');
   }
   const fullUrl = createFullApiUrl(apiUrl, api.mfaRegister);
@@ -153,10 +152,10 @@ export function mfaRegister(apiUrl: string, apiKey: string, body: MFARigisterPar
  * @returns promise
  */
 export function mfaVerify(apiUrl: string, apiKey: string, body: MFAVirifyParams): Promise<any> {
-  if (_.isEmpty(apiUrl) || _.isEmpty(apiKey)) {
+  if (isEmpty(apiUrl) || isEmpty(apiKey)) {
     throw new Error(apiUrlApiKeyError);
   }
-  if (_.isEmpty(body.code)) {
+  if (isEmpty(body.code)) {
     throw new Error('Verification code can not be empty');
   }
   const fullUrl = createFullApiUrl(apiUrl, api.mfaVerify);
@@ -177,10 +176,10 @@ export function mfaVerify(apiUrl: string, apiKey: string, body: MFAVirifyParams)
  * @returns promise
  */
 export function getConfig(apiUrl: string, data: ConfigParams): Promise<any> {
-  if (_.isEmpty(apiUrl)) {
+  if (isEmpty(apiUrl)) {
     throw new Error(apiUrlError);
   }
-  if (_.isEmpty(data.domain)) {
+  if (isEmpty(data.domain)) {
     throw new Error('Tech Error: Domain is compulsory!');
   }
   const fullUrl = createFullApiUrl(apiUrl, api.getConfig);

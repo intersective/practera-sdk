@@ -1,4 +1,5 @@
-import { createFullApiUrl } from '../services/utils/utils-service';
+import { createFullApiUrl, isEmpty, has } from '../services/utils/utils-service';
+import _ from "lodash";
 
 describe('When testing createFullApiUrl()', (): void => {
   it('should return full API URL', (): void => {
@@ -15,5 +16,24 @@ describe('When testing createFullApiUrl()', (): void => {
     spyOn(console, 'error');
     const fullUrl: string = createFullApiUrl('testAPI.com/', '');
     expect(console.error).toBeCalled();
+  });
+});
+
+describe('isEmpty()', () => {
+  it('should check if target parameter is empty (undefined, null, {}, \'\')', () => {
+    expect(isEmpty('')).toBeTruthy();
+    expect(isEmpty({})).toBeTruthy();
+    expect(isEmpty(null)).toBeTruthy();
+    expect(isEmpty(undefined)).toBeTruthy();
+    expect(isEmpty(0)).toBeFalsy();
+    expect(isEmpty(1)).toBeFalsy();
+  });
+});
+
+describe('lodash extensions', () => {
+  it('should has', () => {
+    spyOn(_, 'has');
+    has([1, 2, 3], () => true);
+    expect(_.has).toHaveBeenCalled();
   });
 });

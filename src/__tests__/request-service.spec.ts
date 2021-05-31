@@ -1,11 +1,9 @@
 import { makeGetApiCall, makePostApiCall, makePutApiCall } from '../services/request/request-service';
-import _ from "lodash";
 import Axios from 'axios';
 
 describe('When test makeGetApiCall()', (): void => {
   it('should call the correct API', (): void => {
     const endPoint = 'testAPI.com/login';
-    spyOn(_, 'has').and.returnValue(false);
     spyOn(Axios, 'get').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
@@ -27,7 +25,6 @@ describe('When test makeGetApiCall()', (): void => {
         domain : 'test.com'
       }
     }
-    spyOn(_, 'has').and.returnValue(true);
     spyOn(Axios, 'get').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
@@ -49,7 +46,6 @@ describe('When test makeGetApiCall()', (): void => {
 describe('When test makePostApiCall()', (): void => {
   it('should call the correct API', (): void => {
     const endPoint = 'testAPI.com/login';
-    spyOn(_, 'has').and.returnValue(false);
     spyOn(Axios, 'post').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
@@ -75,7 +71,6 @@ describe('When test makePostApiCall()', (): void => {
       userName: 'testUser',
       password: '12345'
     }
-    spyOn(_, 'has').and.returnValue(true);
     spyOn(Axios, 'post').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
@@ -97,7 +92,6 @@ describe('When test makePostApiCall()', (): void => {
 describe('When test makePutApiCall()', (): void => {
   it('should call the correct API', (): void => {
     const endPoint = 'testAPI.com/user';
-    spyOn(_, 'has').and.returnValue(false);
     spyOn(Axios, 'put').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
@@ -122,7 +116,6 @@ describe('When test makePutApiCall()', (): void => {
     const data = {
       password: '12345'
     }
-    spyOn(_, 'has').and.returnValue(true);
     spyOn(Axios, 'put').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));

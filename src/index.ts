@@ -12,7 +12,7 @@ import {
   register,
   verify as verifyRegistration
 } from './services/registration/registration-service';
-import _ from "lodash";
+import { isEmpty } from './services/utils/utils-service';
 
 interface MFARigisterParams {
   countryCode: string;
@@ -52,7 +52,7 @@ export class PracteraSDK {
     username: string;
     password: string;
   }): Promise<any> {
-    if (_.isEmpty(data.username) || _.isEmpty(data.password)) {
+    if (isEmpty(data.username) || isEmpty(data.password)) {
       throw new Error('username and password cannot be empty.');
     }
 
@@ -69,7 +69,7 @@ export class PracteraSDK {
    * @returns promise
    */
   forgotPassword(data: any): Promise<any> {
-    if (_.isEmpty(data.email) || _.isEmpty(data.globalLoginUrl)) {
+    if (isEmpty(data.email) || isEmpty(data.globalLoginUrl)) {
       throw new Error('Email and globalLoginUrl cannot be empty.');
     }
     return forgotPassword(this.apiUrl, data);
@@ -86,11 +86,11 @@ export class PracteraSDK {
   resetPassword(data: {
     password: string;
   }): Promise<any> {
-    if (_.isEmpty(this.apiKey)) {
+    if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
 
-    if (_.isEmpty(data.password)) {
+    if (isEmpty(data.password)) {
       throw new Error('Password cannot be empty.');
     }
 
@@ -111,7 +111,7 @@ export class PracteraSDK {
    * @returns promise
    */
   register(data: any): Promise<any> {
-    if (_.isEmpty(this.apiKey)) {
+    if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
 
@@ -134,7 +134,7 @@ export class PracteraSDK {
    * @returns promise
    */
   verifyRegistration(data: any): Promise<any> {
-    if (_.isEmpty(this.apiKey)) {
+    if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
 
@@ -155,11 +155,11 @@ export class PracteraSDK {
    * @returns promise
    */
   mfaRegister(data: MFARigisterParams): Promise<any> {
-    if (_.isEmpty(this.apiKey)) {
+    if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
 
-    if (_.isEmpty(data.countryCode) || _.isEmpty(data.number)) {
+    if (isEmpty(data.countryCode) || isEmpty(data.number)) {
       throw new Error('Country code and phone number can not be empty.');
     }
 
@@ -174,7 +174,7 @@ export class PracteraSDK {
    * @returns promise
    */
   mfaSMS(): Promise<any> {
-    if (_.isEmpty(this.apiKey)) {
+    if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
     return mfaSMS(this.apiUrl, this.apiKey);
@@ -189,10 +189,10 @@ export class PracteraSDK {
    * @returns promise
    */
   mfaVerify(data: MFAVerifyParams): Promise<any> {
-    if (_.isEmpty(this.apiKey)) {
+    if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
-    if (_.isEmpty(data.code)) {
+    if (isEmpty(data.code)) {
       throw new Error('Verification code can not be empty');
     }
 
@@ -211,7 +211,7 @@ export class PracteraSDK {
    * @returns promise
    */
   getCustomConfig(data: ConfigParams): Promise<any> {
-    if (_.isEmpty(data.domain)) {
+    if (isEmpty(data.domain)) {
       throw new Error('Tech Error: Domain is compulsory!');
     }
     return getConfig(this.apiUrl, data);

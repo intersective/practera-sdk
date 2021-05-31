@@ -1,3 +1,27 @@
+import * as _ from 'lodash';
+
+/** check if a value is empty
+   * precautions:
+   *  - Lodash's isEmpty, by default, sees "number" type value as empty,
+   *    but in our case, we just treat null/undefined/""/[]/{} as empty.
+   *  - [{}] = true
+   *  - [{}, {}, {}] = false
+   *
+   * @param  any     value
+   * @return boolean   true: when empty string/object/array, otherwise false
+   */
+export const isEmpty = (value: any): boolean => {
+  // number type value shouldn't be treat as empty
+  if (typeof value === 'number') {
+    return false;
+  }
+  return _.isEmpty(value);
+}
+
+export const has = (object: any, path: any): boolean => {
+  return _.has(object, path);
+}
+
 /**
  * Method will combine the API url with endpoint and create full URL for request.
  * @param apiUrl string - Api actual URL

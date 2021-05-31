@@ -1,6 +1,5 @@
 import { makePostApiCall } from '../request/request-service';
-import { createFullApiUrl } from '../utils/utils-service';
-import _ from "lodash";
+import { createFullApiUrl, isEmpty } from '../utils/utils-service';
 
 interface Registration {
   password: string;
@@ -36,7 +35,7 @@ const api = {
  * @returns promise
  */
 export function register(apiUrl: string, apiKey: string, appkey: string, body: Registration): Promise<any> {
-  if (_.isEmpty(body.password) || typeof body.user_id != "number" || _.isEmpty(body.key)) {
+  if (isEmpty(body.password) || typeof body.user_id != "number" || isEmpty(body.key)) {
     throw new Error("Password, user_id & key must not be empty");
   }
 
@@ -58,7 +57,7 @@ export function register(apiUrl: string, apiKey: string, appkey: string, body: R
  * @return {Promise<any>}              axios promise respond
  */
 export function verify(apiUrl: string, apiKey: string, appkey: string, body: VerifyRegistration): Promise<any> {
-  if (_.isEmpty(body.email) || _.isEmpty(body.key)) {
+  if (isEmpty(body.email) || isEmpty(body.key)) {
     throw new Error("Email & key values must not be empty");
   }
 
