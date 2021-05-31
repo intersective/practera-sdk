@@ -20,7 +20,7 @@ describe('When testing login()', () => {
 
   it('should call login service with correct data', () => {
     const data = {
-      email: 'testUser',
+      username: 'testUser',
       password: DUMMY_PASSWORD
     };
     const sdk = new PracteraSDK(API_URL);
@@ -30,14 +30,14 @@ describe('When testing login()', () => {
 
   it('should throw error when required data N/A', async () => {
     const data = {
-      email: '',
+      username: '',
       password: DUMMY_PASSWORD
     };
     const sdk = new PracteraSDK(API_URL);
     try {
       await sdk.login(data);
     } catch (err) {
-      expect(err.message).toEqual('Email and password must not be empty.');
+      expect(err.message).toEqual('username and password cannot be empty.');
     }
   });
 });
@@ -61,7 +61,7 @@ describe('When testing forgotPassword()', () => {
   });
 
   it('should throw error if email or/and globalLoginUrl are missing', async () => {
-    const WARNING_MSG = 'Email and globalLoginUrl must not be empty.';
+    const WARNING_MSG = 'Email and globalLoginUrl cannot be empty.';
     const testData = async (data: any) => {
       try {
         await sdk.forgotPassword(data);

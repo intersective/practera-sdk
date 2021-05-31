@@ -43,17 +43,17 @@ export class PracteraSDK {
    * this method will call login api to log in user with user credentials.
    * @param data json object - login credentials
    * {
-   *  email: 'abcd@gmail.com',
+   *  username: 'abcd@gmail.com',
    *  password: '1234'
    * }
    * @returns promise
    */
   login(data: {
-    email: string;
+    username: string;
     password: string;
   }): Promise<any> {
-    if (_.isEmpty(data.email) || _.isEmpty(data.password)) {
-      throw new Error('Email and password must not be empty.');
+    if (_.isEmpty(data.username) || _.isEmpty(data.password)) {
+      throw new Error('username and password cannot be empty.');
     }
 
     return login(this.apiUrl, data);
@@ -70,7 +70,7 @@ export class PracteraSDK {
    */
   forgotPassword(data: any): Promise<any> {
     if (_.isEmpty(data.email) || _.isEmpty(data.globalLoginUrl)) {
-      throw new Error('Email and globalLoginUrl must not be empty.');
+      throw new Error('Email and globalLoginUrl cannot be empty.');
     }
     return forgotPassword(this.apiUrl, data);
   }

@@ -54,7 +54,7 @@ const practeraSDK = new PracteraSDK('apiUrl', 'apikey'); // when SDK rely on api
 
 ### Login
 
-Login service is calling `/login` endpoint of the API URL passed when SDK init. To call login service need to pass user credentials. Credentials contains two data, user email address and password.
+Login service is calling `/login` endpoint of the API URL passed when SDK init. To call login service need to pass user credentials. Credentials contains two data. username, email address of user and password.
 
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
@@ -62,7 +62,7 @@ import { PracteraSDK } from '@practera/practera-sdk';
 const practeraSDK = new PracteraSDK('apiUrl');
 
 let credentials = {
-   email: 'abcd@gmail.com',
+   username: 'abcd@gmail.com',
    password: '1234'
 }
 

@@ -48,7 +48,7 @@ function createResetDirectLinks(globalLoginUrl: string): any {
  * @param apiUrl string - actual API URL.
  * @param body json object - login credentials
  * {
- *  email: 'abcd@gmail.com',
+ *  username: 'abcd@gmail.com',
  *  password: '1234'
  * }
  * @returns promise
