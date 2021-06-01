@@ -1,6 +1,5 @@
-import { makeGetApiCall, makePostApiCall, makePutApiCall } from '../request/request-service';
-import { createFullApiUrl } from '../utils/utils-service';
-import _ from 'lodash';
+import { makePostApiCall, makePutApiCall } from '../request';
+import { urlFormatter, isEmpty } from '../utils';
 
 interface MFARigisterParams {
   countryCode: string;
@@ -11,17 +10,12 @@ interface MFAVirifyParams {
   code: string;
 }
 
-export interface ConfigParams {
-  domain: string;
-}
-
 /**
  * api
  * @description list of api endpoint involved in this service
  * {Object}
  */
 const api = {
-  getConfig: '/api/v2/plan/experience/list',
   login: 'login',
   forgotPassword: 'forgotPassword',
   resetPassword: 'user',
@@ -33,7 +27,6 @@ const api = {
   getStack: 'stack'
 };
 
-const apiUrlError = 'API Url can not be empty';
 const apiUrlApiKeyError = 'API Url and API key can not be empty';
 
 function createResetDirectLinks(globalLoginUrl: string): any {
@@ -54,7 +47,7 @@ function createResetDirectLinks(globalLoginUrl: string): any {
  * @returns promise
  */
 export function login(apiUrl: string, body: any): Promise<any> {
-  const fullUrl = createFullApiUrl(apiUrl, api.login);
+  const fullUrl = urlFormatter(apiUrl, api.login);
   return makePostApiCall(fullUrl, body);
 }
 
@@ -69,7 +62,7 @@ export function login(apiUrl: string, body: any): Promise<any> {
  * @returns promise
  */
 export function forgotPassword(apiUrl: string, data: any): any {
-  const fullUrl = createFullApiUrl(apiUrl, api.forgotPassword);
+  const fullUrl = urlFormatter(apiUrl, api.forgotPassword);
   const directLinks = createResetDirectLinks(data.globalLoginUrl);
   const body = {
     email: data.email,
@@ -90,7 +83,7 @@ export function forgotPassword(apiUrl: string, data: any): any {
  * @returns promise
  */
 export function resetPassword(apiUrl: string, apiKey: string, body: any): any {
-  const fullUrl = createFullApiUrl(apiUrl, api.resetPassword);
+  const fullUrl = urlFormatter(apiUrl, api.resetPassword);
   return makePutApiCall(fullUrl, body, {
     headers: {
       apiKey: apiKey
@@ -105,10 +98,10 @@ export function resetPassword(apiUrl: string, apiKey: string, body: any): any {
  * @returns promise
  */
 export function mfaSMS(apiUrl: string, apiKey: string): any {
-  if (_.isEmpty(apiUrl) || _.isEmpty(apiKey)) {
+  if (isEmpty(apiUrl) || isEmpty(apiKey)) {
     throw new Error(apiUrlApiKeyError);
   }
-  const fullUrl = createFullApiUrl(apiUrl, api.mfaSMS);
+  const fullUrl = urlFormatter(apiUrl, api.mfaSMS);
   return makePostApiCall(fullUrl, {}, {
     headers: {
       apiKey: apiKey
@@ -128,13 +121,13 @@ export function mfaSMS(apiUrl: string, apiKey: string): any {
  * @returns promise
  */
 export function mfaRegister(apiUrl: string, apiKey: string, body: MFARigisterParams): any {
-  if (_.isEmpty(apiUrl) || _.isEmpty(apiKey)) {
+  if (isEmpty(apiUrl) || isEmpty(apiKey)) {
     throw new Error(apiUrlApiKeyError);
   }
-  if (_.isEmpty(body.countryCode) || _.isEmpty(body.number)) {
+  if (isEmpty(body.countryCode) || isEmpty(body.number)) {
     throw new Error('Country code and phone number can not be empty');
   }
-  const fullUrl = createFullApiUrl(apiUrl, api.mfaRegister);
+  const fullUrl = urlFormatter(apiUrl, api.mfaRegister);
   return makePostApiCall(fullUrl, body, {
     headers: {
       apiKey: apiKey
@@ -153,38 +146,16 @@ export function mfaRegister(apiUrl: string, apiKey: string, body: MFARigisterPar
  * @returns promise
  */
 export function mfaVerify(apiUrl: string, apiKey: string, body: MFAVirifyParams): Promise<any> {
-  if (_.isEmpty(apiUrl) || _.isEmpty(apiKey)) {
+  if (isEmpty(apiUrl) || isEmpty(apiKey)) {
     throw new Error(apiUrlApiKeyError);
   }
-  if (_.isEmpty(body.code)) {
+  if (isEmpty(body.code)) {
     throw new Error('Verification code can not be empty');
   }
-  const fullUrl = createFullApiUrl(apiUrl, api.mfaVerify);
+  const fullUrl = urlFormatter(apiUrl, api.mfaVerify);
   return makePostApiCall(fullUrl, body, {
     headers: {
       apiKey: apiKey
     }
-  });
-}
-
-/**
- * This method will call experience list service to get custom config of the experience.
- * @param apiUrl string - actual API URL.
- * @param data json object - params need to pass to the api call
- * {
- *  domain: 'https://app.practera.com'
- * }
- * @returns promise
- */
-export function getConfig(apiUrl: string, data: ConfigParams): Promise<any> {
-  if (_.isEmpty(apiUrl)) {
-    throw new Error(apiUrlError);
-  }
-  if (_.isEmpty(data.domain)) {
-    throw new Error('Tech Error: Domain is compulsory!');
-  }
-  const fullUrl = createFullApiUrl(apiUrl, api.getConfig);
-  return makeGetApiCall(fullUrl, {
-    params: data
   });
 }

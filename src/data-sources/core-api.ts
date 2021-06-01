@@ -1,6 +1,5 @@
-import { makePostApiCall } from '../request/request-service';
-import { createFullApiUrl } from '../utils/utils-service';
-import _ from "lodash";
+import { makePostApiCall, makeGetApiCall } from '../request';
+import { urlFormatter, isEmpty } from '../utils';
 
 interface Registration {
   password: string;
@@ -13,6 +12,10 @@ interface VerifyRegistration {
   key: string;
 }
 
+interface ConfigParams {
+  domain: string;
+}
+
 /**
  * api
  * @description list of api endpoint involved in this service
@@ -21,6 +24,7 @@ interface VerifyRegistration {
 const api = {
   register: '/api/registration_details.json',
   verify: '/api/verification_codes.json',
+  getConfig: '/api/v2/plan/experience/list'
 };
 
 /**
@@ -36,11 +40,11 @@ const api = {
  * @returns promise
  */
 export function register(apiUrl: string, apiKey: string, appkey: string, body: Registration): Promise<any> {
-  if (_.isEmpty(body.password) || typeof body.user_id != "number" || _.isEmpty(body.key)) {
+  if (isEmpty(body.password) || typeof body.user_id != "number" || isEmpty(body.key)) {
     throw new Error("Password, user_id & key must not be empty");
   }
 
-  const fullUrl = createFullApiUrl(apiUrl, api.register);
+  const fullUrl = urlFormatter(apiUrl, api.register);
   return makePostApiCall(fullUrl, body, {
     headers: {
       apiKey,
@@ -58,15 +62,34 @@ export function register(apiUrl: string, apiKey: string, appkey: string, body: R
  * @return {Promise<any>}              axios promise respond
  */
 export function verify(apiUrl: string, apiKey: string, appkey: string, body: VerifyRegistration): Promise<any> {
-  if (_.isEmpty(body.email) || _.isEmpty(body.key)) {
+  if (isEmpty(body.email) || isEmpty(body.key)) {
     throw new Error("Email & key values must not be empty");
   }
 
-  const fullUrl = createFullApiUrl(apiUrl, api.verify);
+  const fullUrl = urlFormatter(apiUrl, api.verify);
   return makePostApiCall(fullUrl, body, {
     headers: {
       apiKey,
       appkey,
     }
+  });
+}
+
+/**
+ * This method will call experience list service to get custom config of the experience.
+ * @param apiUrl string - actual API URL.
+ * @param data json object - params need to pass to the api call
+ * {
+ *  domain: 'https://app.practera.com'
+ * }
+ * @returns promise
+ */
+export function getConfig(apiUrl: string, data: ConfigParams): Promise<any> {
+  if (isEmpty(data.domain)) {
+    throw new Error('Tech Error: Domain is compulsory!');
+  }
+  const fullUrl = urlFormatter(apiUrl, api.getConfig);
+  return makeGetApiCall(fullUrl, {
+    params: data
   });
 }

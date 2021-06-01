@@ -1,5 +1,5 @@
 import Axios, { AxiosRequestConfig } from 'axios';
-import _ from "lodash";
+import { has } from './utils';
 
 /**
  * This method will append headers and URL parameters to an API request.
@@ -21,10 +21,10 @@ function createRequestConfig(httpOptions: any) : AxiosRequestConfig {
     httpOptions = {};
   }
 
-  if (!_.has(httpOptions, 'headers')) {
+  if (!has(httpOptions, 'headers')) {
     httpOptions.headers = '';
   }
-  if (!_.has(httpOptions, 'headers')) {
+  if (!has(httpOptions, 'params')) {
     httpOptions.params = '';
   }
   return {
