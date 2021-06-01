@@ -1,5 +1,5 @@
 import { makePostApiCall, makePutApiCall } from '../request';
-import { createFullApiUrl, isEmpty } from '../utils';
+import { urlFormatter, isEmpty } from '../utils';
 
 interface MFARigisterParams {
   countryCode: string;
@@ -47,7 +47,7 @@ function createResetDirectLinks(globalLoginUrl: string): any {
  * @returns promise
  */
 export function login(apiUrl: string, body: any): Promise<any> {
-  const fullUrl = createFullApiUrl(apiUrl, api.login);
+  const fullUrl = urlFormatter(apiUrl, api.login);
   return makePostApiCall(fullUrl, body);
 }
 
@@ -62,7 +62,7 @@ export function login(apiUrl: string, body: any): Promise<any> {
  * @returns promise
  */
 export function forgotPassword(apiUrl: string, data: any): any {
-  const fullUrl = createFullApiUrl(apiUrl, api.forgotPassword);
+  const fullUrl = urlFormatter(apiUrl, api.forgotPassword);
   const directLinks = createResetDirectLinks(data.globalLoginUrl);
   const body = {
     email: data.email,
@@ -83,7 +83,7 @@ export function forgotPassword(apiUrl: string, data: any): any {
  * @returns promise
  */
 export function resetPassword(apiUrl: string, apiKey: string, body: any): any {
-  const fullUrl = createFullApiUrl(apiUrl, api.resetPassword);
+  const fullUrl = urlFormatter(apiUrl, api.resetPassword);
   return makePutApiCall(fullUrl, body, {
     headers: {
       apiKey: apiKey
@@ -101,7 +101,7 @@ export function mfaSMS(apiUrl: string, apiKey: string): any {
   if (isEmpty(apiUrl) || isEmpty(apiKey)) {
     throw new Error(apiUrlApiKeyError);
   }
-  const fullUrl = createFullApiUrl(apiUrl, api.mfaSMS);
+  const fullUrl = urlFormatter(apiUrl, api.mfaSMS);
   return makePostApiCall(fullUrl, {}, {
     headers: {
       apiKey: apiKey
@@ -127,7 +127,7 @@ export function mfaRegister(apiUrl: string, apiKey: string, body: MFARigisterPar
   if (isEmpty(body.countryCode) || isEmpty(body.number)) {
     throw new Error('Country code and phone number can not be empty');
   }
-  const fullUrl = createFullApiUrl(apiUrl, api.mfaRegister);
+  const fullUrl = urlFormatter(apiUrl, api.mfaRegister);
   return makePostApiCall(fullUrl, body, {
     headers: {
       apiKey: apiKey
@@ -152,7 +152,7 @@ export function mfaVerify(apiUrl: string, apiKey: string, body: MFAVirifyParams)
   if (isEmpty(body.code)) {
     throw new Error('Verification code can not be empty');
   }
-  const fullUrl = createFullApiUrl(apiUrl, api.mfaVerify);
+  const fullUrl = urlFormatter(apiUrl, api.mfaVerify);
   return makePostApiCall(fullUrl, body, {
     headers: {
       apiKey: apiKey

@@ -23,19 +23,6 @@ export const has = (object: any, path: any): boolean => {
 }
 
 /**
- * Method will combine the API url with endpoint and create full URL for request.
- * @param apiUrl string - Api actual URL
- * @param endpoint string - Api endpoint
- * @returns string - Full API URL.
- */
-export const createFullApiUrl = (apiUrl: string, endPoint: string): string => {
-  if (!apiUrl || !endPoint) {
-    console.error('apiUrl and endPoint is required');
-  }
-  return urlFormatter(apiUrl, endPoint);
-};
-
-/**
  * Given a domain and endpoint string, return an absolute url formatted string
  *
  * e.g.

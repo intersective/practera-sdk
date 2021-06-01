@@ -1,21 +1,23 @@
-import { createFullApiUrl, isEmpty, has } from '../utils';
+import { urlFormatter, isEmpty, has } from '../utils';
 import _ from "lodash";
 
-describe('When testing createFullApiUrl()', (): void => {
+describe('When testing urlFormatter()', (): void => {
   it('should return full API URL', (): void => {
-    const domain = 'testAPI.com';
-    const fullUrl: string = createFullApiUrl(`https://${domain}/`, 'login');
-    expect(fullUrl).toEqual(`https://${domain}/login`);
-  });
-  it('should console error if apiUrl empty', (): void => {
-    spyOn(console, 'error');
-    const fullUrl: string = createFullApiUrl('', 'login');
-    expect(console.error).toBeCalled();
-  });
-  it('should console error if endPoint empty', (): void => {
-    spyOn(console, 'error');
-    const fullUrl: string = createFullApiUrl('testAPI.com/', '');
-    expect(console.error).toBeCalled();
+    const domains = [
+      'test.practera.com',
+      'http://test.practera.com',
+      'https://test.practera.com',
+      'test.practera.com/',
+      'http://test.practera.com/',
+      'https://test.practera.com/',
+    ];
+    const endpoints = ['login', '/login', 'login/', undefined];
+
+    domains.forEach(domain => {
+      endpoints.forEach(endpoint => {
+        expect(urlFormatter(domain, endpoint)).toMatchSnapshot(`"${domain}", "${endpoint}"`);
+      });
+    });
   });
 });
 

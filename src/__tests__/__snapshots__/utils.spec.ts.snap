@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`When testing urlFormatter() should return full API URL: "http://test.practera.com", "/login" 1`] = `"http://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "http://test.practera.com", "login" 1`] = `"http://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "http://test.practera.com", "login/" 1`] = `"http://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "http://test.practera.com", "undefined" 1`] = `"http://test.practera.com"`;
+
+exports[`When testing urlFormatter() should return full API URL: "http://test.practera.com/", "/login" 1`] = `"http://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "http://test.practera.com/", "login" 1`] = `"http://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "http://test.practera.com/", "login/" 1`] = `"http://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "http://test.practera.com/", "undefined" 1`] = `"http://test.practera.com"`;
+
+exports[`When testing urlFormatter() should return full API URL: "https://test.practera.com", "/login" 1`] = `"https://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "https://test.practera.com", "login" 1`] = `"https://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "https://test.practera.com", "login/" 1`] = `"https://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "https://test.practera.com", "undefined" 1`] = `"https://test.practera.com"`;
+
+exports[`When testing urlFormatter() should return full API URL: "https://test.practera.com/", "/login" 1`] = `"https://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "https://test.practera.com/", "login" 1`] = `"https://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "https://test.practera.com/", "login/" 1`] = `"https://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "https://test.practera.com/", "undefined" 1`] = `"https://test.practera.com"`;
+
+exports[`When testing urlFormatter() should return full API URL: "test.practera.com", "/login" 1`] = `"https://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "test.practera.com", "login" 1`] = `"https://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "test.practera.com", "login/" 1`] = `"https://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "test.practera.com", "undefined" 1`] = `"https://test.practera.com"`;
+
+exports[`When testing urlFormatter() should return full API URL: "test.practera.com/", "/login" 1`] = `"https://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "test.practera.com/", "login" 1`] = `"https://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "test.practera.com/", "login/" 1`] = `"https://test.practera.com/login"`;
+
+exports[`When testing urlFormatter() should return full API URL: "test.practera.com/", "undefined" 1`] = `"https://test.practera.com"`;

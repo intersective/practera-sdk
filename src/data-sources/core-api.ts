@@ -1,5 +1,5 @@
 import { makePostApiCall, makeGetApiCall } from '../request';
-import { createFullApiUrl, isEmpty } from '../utils';
+import { urlFormatter, isEmpty } from '../utils';
 
 interface Registration {
   password: string;
@@ -44,7 +44,7 @@ export function register(apiUrl: string, apiKey: string, appkey: string, body: R
     throw new Error("Password, user_id & key must not be empty");
   }
 
-  const fullUrl = createFullApiUrl(apiUrl, api.register);
+  const fullUrl = urlFormatter(apiUrl, api.register);
   return makePostApiCall(fullUrl, body, {
     headers: {
       apiKey,
@@ -66,7 +66,7 @@ export function verify(apiUrl: string, apiKey: string, appkey: string, body: Ver
     throw new Error("Email & key values must not be empty");
   }
 
-  const fullUrl = createFullApiUrl(apiUrl, api.verify);
+  const fullUrl = urlFormatter(apiUrl, api.verify);
   return makePostApiCall(fullUrl, body, {
     headers: {
       apiKey,
@@ -88,7 +88,7 @@ export function getConfig(apiUrl: string, data: ConfigParams): Promise<any> {
   if (isEmpty(data.domain)) {
     throw new Error('Tech Error: Domain is compulsory!');
   }
-  const fullUrl = createFullApiUrl(apiUrl, api.getConfig);
+  const fullUrl = urlFormatter(apiUrl, api.getConfig);
   return makeGetApiCall(fullUrl, {
     params: data
   });
