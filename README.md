@@ -1,6 +1,6 @@
 # @practera/practera-sdk
 
-This is the sdk of practera. Practera SDK can call different endpoints of API URL passed to the SDK. SDK will always returning promise.
+This is the sdk of practera. Practera SDK can call different endpoints of API URL passed to the SDK. SDK will return promise as it's return value.
 
 ## Health
 
@@ -11,7 +11,10 @@ This is the sdk of practera. Practera SDK can call different endpoints of API UR
 - [Install](#install)
 - [Import](#import)
     - [TypeScript](#typescript)
-- [Servicers](#servicers)
+- [Config Parameters](#config-parameters)
+- [Public Methods](#public-methods)
+  - [useConstructorParams](#useconstructorparams)
+- [API Calls](#api-calls)
     - [Login](#login)
     - [Forgot password](#forgot-password)
     - [Reset password](#reset-password)
@@ -32,34 +35,104 @@ npm install @practera/practera-sdk
 
 ### TypeScript
 
-import the SDK to the TypeScript file that you need to use it.
+Import the SDK to the TypeScript file that you need to use it.
 
 ``` ts
 import { PracteraSDK } from '@practera/practera-sdk';
 ```
 
-initialising `PracteraSDK` object.
+Initialising `PracteraSDK` object.
 
 ```ts
-const practeraSDK = new PracteraSDK('apiUrl');
-// or
-const practeraSDK = new PracteraSDK('apiUrl', 'apikey'); // when SDK rely on apikey for API calls
+const practeraSDK = new PracteraSDK({
+  loginApiUrl: 'login.api.com',
+  coreApiUrl: 'core.api.com',
+  loginAppUrl: 'login.app.com',
+  apiKey: 'apiKey',
+});
 ```
 
 | Property name | Description |
-| :------------ | :----------------------------------------------------------------------------------------------------------- |
-| apiUrl        | When SDK initialising need to pass the base API URL SDK need call. for ex:- `https://api.test.practera.com/` |
+| :----------------- | :----------------------------------------------- |
+| loginApiUrl        | Need to provide Login Api Url when SDK initialising to make API calls to it. `not required` |
+| coreApiUrl         | Need to provide Core Api Url when SDK initialising to make API calls to it. `not required` |
+| loginAppUrl        | Need to provide Global Login App Url when SDK initialising to make API calls to it. `not required` |
+| apiKey             | Need to provide Apikey when SDK rely on apikey for API calls. `not required` |
 
-## Servicers
+## Config Parameters
+
+Config parameters you need to provide depends on which API call you going to make through practera SDK.
+
+```ts
+const practeraSDK = new PracteraSDK({
+  loginApiUrl: 'login.api.com',
+  coreApiUrl: 'core.api.com',
+  loginAppUrl: 'login.app.com',
+  apiKey: 'apiKey',
+});
+```
+```ts
+const practeraSDK = new PracteraSDK({
+  loginApiUrl: 'login.api.com'
+});
+```
+```ts
+const practeraSDK = new PracteraSDK({
+  coreApiUrl: 'core.api.com',
+  apiKey: 'apiKey',
+});
+```
+```ts
+const practeraSDK = new PracteraSDK({
+  loginApiUrl: 'login.api.com',
+  loginAppUrl: 'login.app.com',
+  apiKey: 'apiKey',
+});
+```
+
+If you need to update config params after initialise Practera SDK, can use public method [useConstructorParams](#useconstructorparams)
+
+## Public Methods
+
+Public methods are the methods that's not calling any API cals and you can call to do different things.
+
+### useConstructorParams()
+
+By using this method we can update config parameters passed when SDK initialisation.
+
+```ts
+const practeraSDK = new PracteraSDK({
+  loginApiUrl: 'login.api.com'
+});
+
+practeraSDK.useConstructorParams({
+  coreApiUrl: 'core.api.com',
+  apiKey: 'apiKey',
+});
+
+practeraSDK.useConstructorParams({
+  loginApiUrl: 'login-02.api.com',
+  loginAppUrl: 'login.app.com',
+  apiKey: 'apiKey-02',
+});
+```
+
+## API Calls
+
+These are the API calls can make through Preactera SDK. Each API call reuire different config parameters when SDK initialisation. Before you make any API call make sure you provided correct config parameters when SDK initialise.
+**Check [Config Parameters](#config-parameters) for examples about how we can use them.**
 
 ### Login
 
-Login service is calling `/login` endpoint of the API URL passed when SDK init. To call login service need to pass user credentials. Credentials contains two data. username, email address of user and password.
+Login service is calling `/login` endpoint of the API URL passed when SDK init. 
+To call login service need to pass user credentials. Credentials contains two data. username, email address of user and password.
 
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl');
+const practeraSDK = new PracteraSDK({
+  loginApiUrl: 'login api url'
+});
 
 let credentials = {
    username: 'abcd@gmail.com',
@@ -78,18 +151,19 @@ practeraSDK.login(credentials).then(
 
 ### Forgot password
 
-Forgot password service is calling `/forgotPassword` endpoint of the API URL passed when SDK init. To call forgot password service need to pass user registerd email and global login URL.
-
-Email use to send password reset email to the user and global login URL use to create direct link and reset link to navigate user to global login to reset user password.
+Forgot password service is calling `/forgotPassword` endpoint of the API URL passed when SDK init. 
+To call forgot password service need to pass user registerd email. Email use to send password reset email to the user.
 
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl');
+const practeraSDK = new PracteraSDK({
+  loginApiUrl: 'login api url',
+  loginAppUrl: 'global login app url'
+});
 
 let data = {
-   email: 'abcd@gmail.com',
-   globalLoginUrl: 'https://login.practera.com'
+   email: 'abcd@gmail.com'
 }
 
 practeraSDK.forgotpassword(data).then(
@@ -104,12 +178,16 @@ practeraSDK.forgotpassword(data).then(
 
 ### Reset password
 
-Reset password service is calling `/user` endpoint of the API URL passed when SDK init. To call reset password service need to pass user new password and apiKey getting from email link.
+Reset password service is calling `/user` endpoint of the API URL passed when SDK init. 
+To call reset password service need to pass user new password and apiKey getting from email link.
 
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
+const practeraSDK = new PracteraSDK({
+  loginApiUrl: 'login api url',
+  apiKey: '12345'
+});
 
 let data = {
    password: '123456'
@@ -133,7 +211,10 @@ Purpose: Activate/register user account with user-specified password.
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
+const practeraSDK = new PracteraSDK({
+  coreApiUrl: 'core api url',
+  apiKey: '12345'
+});
 
 let data = {
   appkey: 'sample-appkey',
@@ -160,7 +241,10 @@ Purpose: verify current user registration session
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
+const practeraSDK = new PracteraSDK({
+  coreApiUrl: 'core api url',
+  apiKey: '12345'
+});
 
 let data = {
   appkey: 'sample-appkey',
@@ -180,12 +264,16 @@ practeraSDK.verifyRegistration(data).then(
 
 ### MFA Register
 
-MFA Register service is calling `/mfa/register` endpoint of the API URL passed when SDK init. To call MFA Register service need to pass country code of the phone number, actual phone number and user apiKey.
+MFA Register service is calling `/mfa/register` endpoint of the API URL passed when SDK init. 
+To call MFA Register service need to pass country code of the phone number, actual phone number and user apiKey.
 
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
+const practeraSDK = new PracteraSDK({
+  loginApiUrl: 'login api url',
+  apiKey: '12345'
+});
 
 let data = {
    countryCode: '+94',
@@ -204,12 +292,16 @@ practeraSDK.mfaRegister(data).then(
 
 ### MFA Verify
 
-MFA verify service is calling `/mfa/verify` endpoint of the API URL passed when SDK init. To call MFA verify service need to pass verification code and user apiKey.
+MFA verify service is calling `/mfa/verify` endpoint of the API URL passed when SDK init. 
+To call MFA verify service need to pass verification code and user apiKey.
 
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl', 'apikey');
+const practeraSDK = new PracteraSDK({
+  loginApiUrl: 'login api url',
+  apiKey: '12345'
+});
 
 let data = {
    code: '123456'
@@ -232,7 +324,10 @@ MFA sms service is calling `/mfa/sms` endpoint of the API URL passed when SDK in
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl', 'apiKey');
+const practeraSDK = new PracteraSDK({
+  loginApiUrl: 'login api url',
+  apiKey: '12345'
+});
 
 practeraSDK.mfaSMS().then(
     (response) => {
@@ -246,12 +341,15 @@ practeraSDK.mfaSMS().then(
 
 ### Get Custom Config
 
-Get custom config service is calling `/api/v2/plan/experience/list` endpoint of the API URL passed when SDK init. To call Get custom config service need to pass domain.
+Get custom config service is calling `/api/v2/plan/experience/list` endpoint of the API URL passed when SDK init. 
+To call Get custom config service need to pass domain.
 
 ```ts
 import { PracteraSDK } from '@practera/practera-sdk';
 
-const practeraSDK = new PracteraSDK('apiUrl');
+const practeraSDK = new PracteraSDK({
+  coreApiUrl: 'core api url'
+});
 
 let data = {
    domain: 'https://app.practera.com'
