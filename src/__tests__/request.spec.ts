@@ -1,13 +1,13 @@
-import { makeGetApiCall, makePostApiCall, makePutApiCall } from '../request';
+import { get, post, put } from '../request';
 import Axios from 'axios';
 
-describe('When test makeGetApiCall()', (): void => {
+describe('When test get()', (): void => {
   it('should call the correct API', (): void => {
     const endPoint = 'testAPI.com/login';
     spyOn(Axios, 'get').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
-    makeGetApiCall(endPoint);
+    get(endPoint);
     expect(Axios.get).toHaveBeenCalledTimes(1);
     expect(Axios.get).toHaveBeenCalledWith(endPoint, {
       timeout: 20000,
@@ -28,7 +28,7 @@ describe('When test makeGetApiCall()', (): void => {
     spyOn(Axios, 'get').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
-    makeGetApiCall(endPoint, httpOptions);
+    get(endPoint, httpOptions);
     expect(Axios.get).toHaveBeenCalledTimes(1);
     expect(Axios.get).toHaveBeenCalledWith(endPoint, {
       timeout: 20000,
@@ -43,13 +43,13 @@ describe('When test makeGetApiCall()', (): void => {
   });
 });
 
-describe('When test makePostApiCall()', (): void => {
+describe('When test post()', (): void => {
   it('should call the correct API', (): void => {
     const endPoint = 'testAPI.com/login';
     spyOn(Axios, 'post').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
-    makePostApiCall(endPoint, {});
+    post(endPoint, {});
     expect(Axios.post).toHaveBeenCalledTimes(1);
     expect(Axios.post).toHaveBeenCalledWith(endPoint, {}, {
       timeout: 20000,
@@ -74,7 +74,7 @@ describe('When test makePostApiCall()', (): void => {
     spyOn(Axios, 'post').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
-    makePostApiCall(endPoint, data, httpOptions);
+    post(endPoint, data, httpOptions);
     expect(Axios.post).toHaveBeenCalledTimes(1);
     expect(Axios.post).toHaveBeenCalledWith(endPoint, data, {
       timeout: 20000,
@@ -89,13 +89,13 @@ describe('When test makePostApiCall()', (): void => {
   });
 });
 
-describe('When test makePutApiCall()', (): void => {
+describe('When test put()', (): void => {
   it('should call the correct API', (): void => {
     const endPoint = 'testAPI.com/user';
     spyOn(Axios, 'put').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
-    makePutApiCall(endPoint, {});
+    put(endPoint, {});
     expect(Axios.put).toHaveBeenCalledTimes(1);
     expect(Axios.put).toHaveBeenCalledWith(endPoint, {}, {
       timeout: 20000,
@@ -119,7 +119,7 @@ describe('When test makePutApiCall()', (): void => {
     spyOn(Axios, 'put').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
-    makePutApiCall(endPoint, data, httpOptions);
+    put(endPoint, data, httpOptions);
     expect(Axios.put).toHaveBeenCalledTimes(1);
     expect(Axios.put).toHaveBeenCalledWith(endPoint, data, {
       timeout: 20000,

@@ -1,7 +1,7 @@
 import { mocked } from 'ts-jest/utils';
 import { DUMMY_PASSWORD } from './mock-data';
 
-import { makePostApiCall, makeGetApiCall } from '../request';
+import { post, get } from '../request';
 jest.mock('../request');
 import { verify, register, getConfig } from '../data-sources/core-api';
 
@@ -10,7 +10,7 @@ describe('registration-service', () => {
   const apiKey = 'apiKey';
   const appkey = 'appkey';
 
-  const mockedCall = mocked(makePostApiCall, true);
+  const mockedCall = mocked(post, true);
 
 	describe('verify()', () => {
     it('should verify user registration is valid', () => {
@@ -71,7 +71,7 @@ describe('registration-service', () => {
 
 describe('When testing getConfig()', () => {
   const API_URL = 'testAPI.com/';
-  const mockedCall = mocked(makeGetApiCall, true);
+  const mockedCall = mocked(get, true);
 
   it('should throw error if domain is empty', async () => {
     mockedCall.mockClear();

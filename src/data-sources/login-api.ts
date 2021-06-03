@@ -1,4 +1,4 @@
-import { makePostApiCall, makePutApiCall } from '../request';
+import { post, put } from '../request';
 import { urlFormatter, isEmpty } from '../utils';
 
 interface MFARigisterParams {
@@ -48,7 +48,7 @@ function createResetDirectLinks(globalLoginUrl: string): any {
  */
 export function login(apiUrl: string, body: any): Promise<any> {
   const fullUrl = urlFormatter(apiUrl, api.login);
-  return makePostApiCall(fullUrl, body);
+  return post(fullUrl, body);
 }
 
 /**
@@ -69,7 +69,7 @@ export function forgotPassword(apiUrl: string, data: any): any {
     resetLink: directLinks.reset,
     directLink: directLinks.direct
   }
-  return makePostApiCall(fullUrl, body);
+  return post(fullUrl, body);
 }
 
 /**
@@ -84,7 +84,7 @@ export function forgotPassword(apiUrl: string, data: any): any {
  */
 export function resetPassword(apiUrl: string, apiKey: string, body: any): any {
   const fullUrl = urlFormatter(apiUrl, api.resetPassword);
-  return makePutApiCall(fullUrl, body, {
+  return put(fullUrl, body, {
     headers: {
       apiKey: apiKey
     }
@@ -102,7 +102,7 @@ export function mfaSMS(apiUrl: string, apiKey: string): any {
     throw new Error(apiUrlApiKeyError);
   }
   const fullUrl = urlFormatter(apiUrl, api.mfaSMS);
-  return makePostApiCall(fullUrl, {}, {
+  return post(fullUrl, {}, {
     headers: {
       apiKey: apiKey
     }
@@ -128,7 +128,7 @@ export function mfaRegister(apiUrl: string, apiKey: string, body: MFARigisterPar
     throw new Error('Country code and phone number can not be empty');
   }
   const fullUrl = urlFormatter(apiUrl, api.mfaRegister);
-  return makePostApiCall(fullUrl, body, {
+  return post(fullUrl, body, {
     headers: {
       apiKey: apiKey
     }
@@ -153,7 +153,7 @@ export function mfaVerify(apiUrl: string, apiKey: string, body: MFAVirifyParams)
     throw new Error('Verification code can not be empty');
   }
   const fullUrl = urlFormatter(apiUrl, api.mfaVerify);
-  return makePostApiCall(fullUrl, body, {
+  return post(fullUrl, body, {
     headers: {
       apiKey: apiKey
     }

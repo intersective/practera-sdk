@@ -8,7 +8,7 @@ const API_WARNING = 'API Url and API key can not be empty';
 describe('login()', () => {
   it('should call request service with testAPi.com/login and data', () => {
     spyOn(utilService,'urlFormatter').and.returnValue('https://testAPI.com/login');
-    spyOn(requestService,'makePostApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
+    spyOn(requestService,'post').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
     const data = {
@@ -17,14 +17,14 @@ describe('login()', () => {
     };
     login(API_URL, data);
     expect(utilService.urlFormatter).toHaveBeenCalledWith(API_URL, 'login');
-    expect(requestService.makePostApiCall).toHaveBeenCalledWith('https://testAPI.com/login', data);
+    expect(requestService.post).toHaveBeenCalledWith('https://testAPI.com/login', data);
   });
 });
 
 describe('When testing forgotPassword()', () => {
   it('should call request service with testAPI.com/forgotPassword and data', () => {
     spyOn(utilService,'urlFormatter').and.returnValue('https://testAPI.com/forgotPassword');
-    spyOn(requestService,'makePostApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
+    spyOn(requestService,'post').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
     const data = {
@@ -38,14 +38,14 @@ describe('When testing forgotPassword()', () => {
     }
     forgotPassword(API_URL, data);
     expect(utilService.urlFormatter).toHaveBeenCalledWith(API_URL, 'forgotPassword');
-    expect(requestService.makePostApiCall).toHaveBeenCalledWith('https://testAPI.com/forgotPassword', requestData);
+    expect(requestService.post).toHaveBeenCalledWith('https://testAPI.com/forgotPassword', requestData);
   });
 });
 
 describe('When testing resetPassword()', () => {
   it('should call request service with testAPI.com/user and data', () => {
     spyOn(utilService,'urlFormatter').and.returnValue('https://testAPI.com/user');
-    spyOn(requestService,'makePutApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
+    spyOn(requestService,'put').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
     const apiKey = 'axcd';
@@ -54,7 +54,7 @@ describe('When testing resetPassword()', () => {
     };
     resetPassword(API_URL, apiKey, body);
     expect(utilService.urlFormatter).toHaveBeenCalledWith(API_URL, 'user');
-    expect(requestService.makePutApiCall).toHaveBeenCalledWith('https://testAPI.com/user', {
+    expect(requestService.put).toHaveBeenCalledWith('https://testAPI.com/user', {
       password: DUMMY_PASSWORD
     }, {
       headers: {
@@ -74,13 +74,13 @@ describe('When testing mfaSMS()', () => {
   });
   it('should call mfa sms service with full API URL and data', () => {
     spyOn(utilService,'urlFormatter').and.returnValue('https://testAPI.com/mfa/sms');
-    spyOn(requestService,'makePostApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
+    spyOn(requestService,'post').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
     const apiKey = 'axcd';
     mfaSMS(API_URL, apiKey);
     expect(utilService.urlFormatter).toHaveBeenCalledWith(API_URL, 'mfa/sms');
-    expect(requestService.makePostApiCall).toHaveBeenCalledWith('https://testAPI.com/mfa/sms', {}, {
+    expect(requestService.post).toHaveBeenCalledWith('https://testAPI.com/mfa/sms', {}, {
       headers: {
         apiKey: apiKey
       }
@@ -115,7 +115,7 @@ describe('When testing mfaRegister()', () => {
 
   it('should call mfa register service with full API URL and data', () => {
     spyOn(utilService,'urlFormatter').and.returnValue('https://testAPI.com/mfa/register');
-    spyOn(requestService,'makePostApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
+    spyOn(requestService,'post').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
     const apiKey = 'axcd';
@@ -125,7 +125,7 @@ describe('When testing mfaRegister()', () => {
     }
     mfaRegister(API_URL, apiKey, body);
     expect(utilService.urlFormatter).toHaveBeenCalledWith(API_URL, 'mfa/register');
-    expect(requestService.makePostApiCall).toHaveBeenCalledWith('https://testAPI.com/mfa/register', body, {
+    expect(requestService.post).toHaveBeenCalledWith('https://testAPI.com/mfa/register', body, {
       headers: {
         apiKey: apiKey
       }
@@ -159,7 +159,7 @@ describe('When testing mfaVerify()', () => {
 
   it('should call mfa verify service with full API URL and data', () => {
     spyOn(utilService,'urlFormatter').and.returnValue('https://testAPI.com/mfa/verify');
-    spyOn(requestService,'makePostApiCall').and.returnValue(new Promise<void>((resolve, reject) => {
+    spyOn(requestService,'post').and.returnValue(new Promise<void>((resolve, reject) => {
       resolve();
     }));
     const apiKey = 'axcd';
@@ -168,7 +168,7 @@ describe('When testing mfaVerify()', () => {
     }
     mfaVerify(API_URL, apiKey, body);
     expect(utilService.urlFormatter).toHaveBeenCalledWith(API_URL, 'mfa/verify');
-    expect(requestService.makePostApiCall).toHaveBeenCalledWith('https://testAPI.com/mfa/verify', body, {
+    expect(requestService.post).toHaveBeenCalledWith('https://testAPI.com/mfa/verify', body, {
       headers: {
         apiKey: apiKey
       }

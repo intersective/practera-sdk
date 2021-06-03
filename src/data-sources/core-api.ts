@@ -1,4 +1,4 @@
-import { makePostApiCall, makeGetApiCall } from '../request';
+import { post, get } from '../request';
 import { urlFormatter, isEmpty } from '../utils';
 
 interface Registration {
@@ -45,7 +45,7 @@ export function register(apiUrl: string, apiKey: string, appkey: string, body: R
   }
 
   const fullUrl = urlFormatter(apiUrl, api.register);
-  return makePostApiCall(fullUrl, body, {
+  return post(fullUrl, body, {
     headers: {
       apiKey,
       appkey,
@@ -67,7 +67,7 @@ export function verify(apiUrl: string, apiKey: string, appkey: string, body: Ver
   }
 
   const fullUrl = urlFormatter(apiUrl, api.verify);
-  return makePostApiCall(fullUrl, body, {
+  return post(fullUrl, body, {
     headers: {
       apiKey,
       appkey,
@@ -89,7 +89,7 @@ export function getConfig(apiUrl: string, data: ConfigParams): Promise<any> {
     throw new Error('Tech Error: Domain is compulsory!');
   }
   const fullUrl = urlFormatter(apiUrl, api.getConfig);
-  return makeGetApiCall(fullUrl, {
+  return get(fullUrl, {
     params: data
   });
 }
