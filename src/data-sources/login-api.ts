@@ -1,12 +1,31 @@
 import { post, put } from '../request';
 import { urlFormatter, isEmpty } from '../utils';
 
-interface MFARigisterParams {
+interface ConstructorParams {
+  loginApiUrl: string;
+  apiKey?: string;
+  loginAppUrl?: string;
+}
+
+export interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
+export interface ForgotPassword {
+  email: string;
+}
+
+export interface ResetPassword {
+  password: string;
+}
+
+export interface MFARegister {
   countryCode: string;
   number: string;
 }
 
-interface MFAVirifyParams {
+export interface MFAVerify {
   code: string;
 }
 
@@ -27,135 +46,170 @@ const api = {
   getStack: 'stack'
 };
 
-const apiUrlApiKeyError = 'API Url and API key can not be empty';
+// Error and Warning messages.
+const APIKEY_WARNING = 'PracteraSDK instance must be instantiated with apikey';
+const LOGIN_API_URL_WARNING = 'LOGIN API URL required to use this service';
+const LOGIN_APP_URL_WARNING = 'LOGIN APP URL required to use this service';
+const USERNAME_PASS_WARNING = 'username and password can not be empty';
+const EMAIL_EMPTY_WARNING = 'Email can not be empty';
+const PASSWORD_EMPTY_WARNING = 'Password can not be empty';
+const COUNTRY_CODE_NUMBER_WARNING = 'Country code and phone number can not be empty';
+const MFA_VERIFY_WARNING = 'Verification code can not be empty';
 
-function createResetDirectLinks(globalLoginUrl: string): any {
-  return {
-    reset: `${globalLoginUrl}?action=resetpassword&apiKey=`,
-    direct: `${globalLoginUrl}?action=direct&apiKey=`
-  }
-}
+export class LoginAPI {
 
-/**
- * This method will call login api with passed data and will return promise
- * @param apiUrl string - actual API URL.
- * @param body json object - login credentials
- * {
- *  username: 'abcd@gmail.com',
- *  password: '1234'
- * }
- * @returns promise
- */
-export function login(apiUrl: string, body: any): Promise<any> {
-  const fullUrl = urlFormatter(apiUrl, api.login);
-  return post(fullUrl, body);
-}
+  protected apiUrl = '';
+  protected loginAppUrl = '';
+  protected apiKey = '';
 
-/**
- * This method will call forgot password api with passed data and will return promise
- * @param apiUrl string - actual API URL.
- * @param data json object - user registered email address and global login url
- * {
- *  email: 'abcd@gmail.com',
- *  globalLoginUrl: 'https://login.practera.com'
- * }
- * @returns promise
- */
-export function forgotPassword(apiUrl: string, data: any): any {
-  const fullUrl = urlFormatter(apiUrl, api.forgotPassword);
-  const directLinks = createResetDirectLinks(data.globalLoginUrl);
-  const body = {
-    email: data.email,
-    resetLink: directLinks.reset,
-    directLink: directLinks.direct
-  }
-  return post(fullUrl, body);
-}
-
-/**
- * This method will call reset password api with passed data and will return promise
- * @param apiUrl string - actual API URL.
- * @param apiKey string - user apikey get when user login to the system
- * @param data json object - user new password
- * {
- *  password: 'abcdf'
- * }
- * @returns promise
- */
-export function resetPassword(apiUrl: string, apiKey: string, body: any): any {
-  const fullUrl = urlFormatter(apiUrl, api.resetPassword);
-  return put(fullUrl, body, {
-    headers: {
-      apiKey: apiKey
+  constructor(params: ConstructorParams) {
+    if (isEmpty(params.loginApiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
     }
-  });
-}
+    this.apiUrl = params.loginApiUrl;
 
-/**
- * This method will call mfa sms api to send sms to a user.
- * @param apiUrl string - actual API URL.
- * @param apiKey string - user apikey get when user login to the system
- * @returns promise
- */
-export function mfaSMS(apiUrl: string, apiKey: string): any {
-  if (isEmpty(apiUrl) || isEmpty(apiKey)) {
-    throw new Error(apiUrlApiKeyError);
-  }
-  const fullUrl = urlFormatter(apiUrl, api.mfaSMS);
-  return post(fullUrl, {}, {
-    headers: {
-      apiKey: apiKey
+    if (params.apiKey) {
+      this.apiKey = params.apiKey;
     }
-  });
-}
 
-/**
- * This method will call mfa register api to register user phone number in the system.
- * @param apiUrl string - actual API URL.
- * @param apiKey string - user apikey get when user login to the system
- * @param data json object - country code of the mobile number, real mobile number without country code
- * {
- *  countryCode: '+94',
- *  number: '651684654'
- * }
- * @returns promise
- */
-export function mfaRegister(apiUrl: string, apiKey: string, body: MFARigisterParams): any {
-  if (isEmpty(apiUrl) || isEmpty(apiKey)) {
-    throw new Error(apiUrlApiKeyError);
-  }
-  if (isEmpty(body.countryCode) || isEmpty(body.number)) {
-    throw new Error('Country code and phone number can not be empty');
-  }
-  const fullUrl = urlFormatter(apiUrl, api.mfaRegister);
-  return post(fullUrl, body, {
-    headers: {
-      apiKey: apiKey
+    if (params.loginAppUrl) {
+      this.loginAppUrl = params.loginAppUrl;
     }
-  });
-}
+  }
 
-/**
- * This method will call mfa verify api to verify the codes sending by sms to user.
- * @param apiUrl string - actual API URL.
- * @param apiKey string - user apikey get when user login to the system
- * @param data json object - code user type, that came as sms
- * {
- *  code: '550245'
- * }
- * @returns promise
- */
-export function mfaVerify(apiUrl: string, apiKey: string, body: MFAVirifyParams): Promise<any> {
-  if (isEmpty(apiUrl) || isEmpty(apiKey)) {
-    throw new Error(apiUrlApiKeyError);
-  }
-  if (isEmpty(body.code)) {
-    throw new Error('Verification code can not be empty');
-  }
-  const fullUrl = urlFormatter(apiUrl, api.mfaVerify);
-  return post(fullUrl, body, {
-    headers: {
-      apiKey: apiKey
+  /**
+   * Assign values to instance variables if they passed.
+   * @param {ConstructorParams} params parameters that can pass through constructor
+   */
+  useParams(params: ConstructorParams): void {
+    if (params.loginApiUrl) {
+      this.apiUrl = params.loginApiUrl;
     }
-  });
+    if (params.apiKey) {
+      this.apiKey = params.apiKey;
+    }
+    if (params.loginAppUrl) {
+      this.loginAppUrl = params.loginAppUrl;
+    }
+  }
+
+  private createResetDirectLinks(): any {
+    return {
+      reset: `${this.loginAppUrl}?action=resetpassword&apiKey=`,
+      direct: `${this.loginAppUrl}?action=direct&apiKey=`
+    }
+  }
+
+
+  /**
+   * This method will call login api with passed data and will return promise
+   * @param {LoginCredentials} data mandatory content required by endpoint
+   * @return {Promise<any>} axios promise respond
+   */
+  login(data: LoginCredentials): Promise<any> {
+    if (isEmpty(data.username) || isEmpty(data.password)) {
+      throw new Error(USERNAME_PASS_WARNING);
+    }
+    const fullUrl = urlFormatter(this.apiUrl, api.login);
+    return post(fullUrl, data);
+  }
+
+  /**
+   * This method will call forgot password api with passed data and will return promise
+   * @param {ForgotPassword} data mandatory content required by endpoint
+   * @return {Promise<any>} axios promise respond
+   */
+  forgotPassword(data: ForgotPassword): Promise<any> {
+    if (isEmpty(this.loginAppUrl)) {
+      throw new Error(LOGIN_APP_URL_WARNING);
+    }
+    if (isEmpty(data.email)) {
+      throw new Error(EMAIL_EMPTY_WARNING);
+    }
+    const fullUrl = urlFormatter(this.apiUrl, api.forgotPassword);
+    const directLinks = this.createResetDirectLinks();
+    const body = {
+      email: data.email,
+      resetLink: directLinks.reset,
+      directLink: directLinks.direct
+    }
+    return post(fullUrl, body);
+  }
+
+  /**
+   * This method will call reset password api with passed data and will return promise
+   * @param {ResetPassword} data mandatory content required by endpoint
+   * @return {Promise<any>} axios promise respond
+   */
+  resetPassword(data: ResetPassword): Promise<any> {
+    if (isEmpty(this.apiKey)) {
+      throw new Error(APIKEY_WARNING);
+    }
+    if (isEmpty(data.password)) {
+      throw new Error(PASSWORD_EMPTY_WARNING);
+    }
+    const fullUrl = urlFormatter(this.apiUrl, api.resetPassword);
+    return put(fullUrl, data, {
+      headers: {
+        apiKey: this.apiKey
+      }
+    });
+  }
+
+  /**
+   * This method will call mfa sms api to send sms to a user.
+   * @return {Promise<any>} axios promise respond
+   */
+  mfaSMS(): Promise<any> {
+    if (isEmpty(this.apiKey)) {
+      throw new Error(APIKEY_WARNING);
+    }
+    const fullUrl = urlFormatter(this.apiUrl, api.mfaSMS);
+    return post(fullUrl, {}, {
+      headers: {
+        apiKey: this.apiKey
+      }
+    });
+  }
+
+  /**
+   * This method will call mfa register api to register user phone number in the system.
+   * @param {MFARegister} data mandatory content required by endpoint
+   * @return {Promise<any>} axios promise respond
+   */
+  mfaRegister(data: MFARegister): Promise<any> {
+    if (isEmpty(this.apiKey)) {
+      throw new Error(APIKEY_WARNING);
+    }
+    if (isEmpty(data.countryCode) || isEmpty(data.number)) {
+      throw new Error(COUNTRY_CODE_NUMBER_WARNING);
+    }
+    const fullUrl = urlFormatter(this.apiUrl, api.mfaRegister);
+    return post(fullUrl, data, {
+      headers: {
+        apiKey: this.apiKey
+      }
+    });
+  }
+
+  /**
+   * This method will call mfa verify api to verify the codes sending by sms to user.
+   * @param {MFAVerify} data mandatory content required by endpoint
+   * @return {Promise<any>} axios promise respond
+   */
+  mfaVerify(data: MFAVerify): Promise<any> {
+    if (isEmpty(this.apiKey)) {
+      throw new Error(APIKEY_WARNING);
+    }
+    if (isEmpty(data.code)) {
+      throw new Error(MFA_VERIFY_WARNING);
+    }
+    const fullUrl = urlFormatter(this.apiUrl, api.mfaVerify);
+    return post(fullUrl, data, {
+      headers: {
+        apiKey: this.apiKey
+      }
+    });
+  }
+
 }
