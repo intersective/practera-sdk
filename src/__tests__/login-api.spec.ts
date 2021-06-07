@@ -1,25 +1,58 @@
-// import { login, forgotPassword, resetPassword, mfaRegister, mfaSMS, mfaVerify } from '../data-sources/login-api';
-// import * as requestService from '../request';
-// import * as utilService from '../utils';
-// import { DUMMY_PASSWORD } from './mock-data';
-// const API_URL = 'testAPI.com/';
-// const API_WARNING = 'API Url and API key can not be empty';
+import { mocked } from 'ts-jest/utils';
+import { LoginAPI } from '../data-sources/login-api';
+import { post, put } from '../request';
+jest.mock('../request');
+import { has, isEmpty, urlFormatter } from '../utils';
+jest.mock('../utils');
+import { DUMMY_PASSWORD } from './mock-data';
 
-// describe('login()', () => {
-//   it('should call request service with testAPi.com/login and data', () => {
-//     spyOn(utilService,'urlFormatter').and.returnValue('https://testAPI.com/login');
-//     spyOn(requestService,'post').and.returnValue(new Promise<void>((resolve, reject) => {
-//       resolve();
-//     }));
-//     const data = {
-//       userName: 'testUser',
-//       password: DUMMY_PASSWORD
-//     };
-//     login(API_URL, data);
-//     expect(utilService.urlFormatter).toHaveBeenCalledWith(API_URL, 'login');
-//     expect(requestService.post).toHaveBeenCalledWith('https://testAPI.com/login', data);
-//   });
-// });
+
+describe('registration-service', () => {
+
+  const APIKEY_WARNING = 'PracteraSDK instance must be instantiated with apikey';
+  const LOGIN_API_URL_WARNING = 'LOGIN API URL required to use this service';
+  const LOGIN_APP_URL_WARNING = 'LOGIN APP URL required to use this service';
+  const USERNAME_PASS_WARNING = 'username and password can not be empty';
+  const EMAIL_EMPTY_WARNING = 'Email can not be empty';
+  const PASSWORD_EMPTY_WARNING = 'Password can not be empty';
+  const COUNTRY_CODE_NUMBER_WARNING = 'Country code and phone number can not be empty';
+  const MFA_VERIFY_WARNING = 'Verification code can not be empty';
+
+  const API_URL = 'testAPI.com/';
+  const APIKEY = 'appkey';
+  const LOGINAPPURL = 'testAPP.com/'
+
+  const loginAPI = new LoginAPI({loginApiUrl: API_URL, apiKey: APIKEY, loginAppUrl: LOGINAPPURL});
+
+  const mockedPostCall = mocked(post, true);
+  const mockedPutCall = mocked(put, true);
+
+  const mockedurlFormatter = mocked(urlFormatter, true);
+
+  beforeEach(() => {
+    // Clear all instances and calls to constructor and all methods:
+    mockedPostCall.mockClear();
+    mockedPutCall.mockClear();
+    mockedurlFormatter.mockClear();
+  });
+
+  describe('login()', () => {
+    it('should call request service with testAPi.com/login and data', () => {
+      mockedurlFormatter.mockReturnValueOnce('https://testAPI.com/login');
+      mockedPostCall.mockReturnValueOnce(new Promise<void>((resolve, reject) => {
+        resolve();
+      }));
+      const data = {
+        username: 'testUser',
+        password: DUMMY_PASSWORD
+      };
+      loginAPI.login(data);
+      expect(urlFormatter).toHaveBeenCalledWith(API_URL, 'login');
+      expect(mockedPostCall).toHaveBeenCalledWith('https://testAPI.com/login', data);
+    });
+  });
+
+});
 
 // describe('When testing forgotPassword()', () => {
 //   it('should call request service with testAPI.com/forgotPassword and data', () => {

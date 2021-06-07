@@ -1,97 +1,125 @@
-// import { mocked } from 'ts-jest/utils';
-// import { DUMMY_PASSWORD } from './mock-data';
+import { mocked } from 'ts-jest/utils';
+import { DUMMY_PASSWORD } from './mock-data';
 
-// import { post, get } from '../request';
-// jest.mock('../request');
-// import { verify, register, getConfig } from '../data-sources/core-api';
+import { post, get } from '../request';
+jest.mock('../request');
+import { CoreAPI } from '../data-sources/core-api';
 
-// describe('registration-service', () => {
-//   const apiurl = 'test.com/';
-//   const apiKey = 'apiKey';
-//   const appkey = 'appkey';
+describe('registration-service', () => {
 
-//   const mockedCall = mocked(post, true);
+  const CORE_API_URL_WARNING = 'CORE API URL required to use this service';
+  const APP_KEY_WARNING = 'APPKEY required to use this service';
+  const PASS_USER_ID_KEY_WARNING = 'Password, user_id & key can not be empty';
+  const EMAIL_KEY_WARNING = 'Email & key values can not be empty';
+  const DOMAIN_WARNING = 'Tech Error: Domain is compulsory!';
 
-// 	describe('verify()', () => {
-//     it('should verify user registration is valid', () => {
-//       verify(apiurl, apiKey, appkey, {
-//         email: 'test@email.com',
-//         key: 'test'
-//       });
-//       expect(mockedCall).toHaveBeenCalledWith("https://test.com/api/verification_codes.json", {
-//         "email": "test@email.com",
-//         "key": "test"
-//       }, {
-//         "headers": {
-//           "apiKey": "apiKey",
-//           "appkey": "appkey"
-//         }
-//       });
-//     });
+  const apiurl = 'test.com/';
+  const appkey = 'appkey';
 
-//     it('should fail if improper parameters provided', () => {
-//       mockedCall.mockClear();
-//       const t = () => {
-//         verify(apiurl, apiKey, appkey, {
-//           key: 'test',
-//           email: ''
-//         });
-//       };
+  let coreAPI = new CoreAPI({coreApiUrl: apiurl, appkey: appkey});
 
-//       expect(t).toThrow('Email & key values must not be empty');
-//     });
-//   });
+  const mockedPostCall = mocked(post, true);
+  const mockedGetCall = mocked(get, true);
 
-// 	describe('register()', () => {
-// 		it('should call request service with full url and data', () => {
-//       mockedCall.mockClear();
-// 			register(apiurl, apiKey, appkey, {
-//         password: DUMMY_PASSWORD,
-//         user_id: 12345,
-//         key: '12345',
-//       });
-//       expect(mockedCall).toHaveBeenCalled();
-// 		});
+  beforeEach(() => {
+    // Clear all instances and calls to constructor and all methods:
+    mockedPostCall.mockClear();
+    mockedGetCall.mockClear();
+  });
 
-//     it('should fail if improper parameters provided', () => {
-//       mockedCall.mockClear();
-//       const t = () => {
-//         register(apiurl, apiKey, appkey, {
-//           password: '',
-//           user_id: 12345,
-//           key: '12345',
-//         });
-//       };
+  it('should throw errors data pass to constructor is empty', () => {
+    try {
+      coreAPI = new CoreAPI({coreApiUrl: '', appkey: appkey});
+    } catch (error) {
+      expect(error.message).toEqual(CORE_API_URL_WARNING);
+    }
+    try {
+      coreAPI = new CoreAPI({coreApiUrl: apiurl, appkey: ''});
+    } catch (error) {
+      expect(error.message).toEqual(APP_KEY_WARNING);
+    }
+  });
 
-//       expect(t).toThrow('Password, user_id & key must not be empty');
-//     });
-// 	});
+	describe('verify()', () => {
+    it('should verify user registration is valid', () => {
+      coreAPI.verifyRegistration({
+        email: 'test@email.com',
+        key: 'test'
+      });
+      expect(mockedPostCall).toHaveBeenCalledWith("https://test.com/api/verification_codes.json", {
+        "email": "test@email.com",
+        "key": "test"
+      }, {
+        "headers": {
+          "appkey": "appkey"
+        }
+      });
+    });
 
-// });
+    it('should fail if improper parameters provided', () => {
+      mockedPostCall.mockClear();
+      const t = () => {
+        coreAPI.verifyRegistration({
+          key: 'test',
+          email: ''
+        });
+      };
+      expect(t).toThrow(EMAIL_KEY_WARNING);
+    });
+  });
 
-// describe('When testing getConfig()', () => {
-//   const API_URL = 'testAPI.com/';
-//   const mockedCall = mocked(get, true);
+	describe('register()', () => {
+		it('should call request service with full url and data', () => {
+      mockedPostCall.mockClear();
+			coreAPI.register({
+        password: DUMMY_PASSWORD,
+        user_id: 12345,
+        key: '12345',
+      });
+      expect(mockedPostCall).toHaveBeenCalled();
+		});
 
-//   it('should throw error if domain is empty', async () => {
-//     mockedCall.mockClear();
-//     const data = {
-//       domain: '',
-//     };
-//     const call = () => {
-//       getConfig(API_URL, data);
-//     };
-//     expect(call).toThrow('Tech Error: Domain is compulsory!');
-//   });
+    it('should fail if improper parameters provided', () => {
+      mockedPostCall.mockClear();
+      const t = () => {
+        coreAPI.register({
+          password: '',
+          user_id: 12345,
+          key: '12345',
+        });
+      };
+      expect(t).toThrow(PASS_USER_ID_KEY_WARNING);
+    });
+	});
 
-//   it('should call experience list service with full API URL and data', () => {
-//     mockedCall.mockClear();
-//     const data = {
-//       domain: 'https://app.practera.com',
-//     };
-//     getConfig(API_URL, data);
-//     expect(mockedCall).toHaveBeenCalledWith('https://testAPI.com/api/v2/plan/experience/list', {
-//       params: data
-//     });
-//   });
-// });
+  describe('When testing getConfig()', () => {
+
+    it('should throw error if domain is empty', async () => {
+      mockedGetCall.mockClear();
+      const data = {
+        domain: '',
+      };
+      const call = () => {
+        coreAPI.getConfig(data);
+      };
+      expect(call).toThrow(DOMAIN_WARNING);
+    });
+
+    it('should call experience list service with full API URL and data', () => {
+      mockedGetCall.mockClear();
+      const data = {
+        domain: 'https://app.practera.com',
+      };
+      coreAPI.getConfig(data);
+      expect(mockedGetCall).toHaveBeenCalledWith('https://test.com/api/v2/plan/experience/list', {
+        params: {
+          domain: 'https://app.practera.com',
+        },
+        headers: {
+          appkey: appkey
+        }
+      });
+    });
+  });
+
+});
