@@ -56,7 +56,7 @@ const PASSWORD_EMPTY_WARNING = 'Password can not be empty';
 const COUNTRY_CODE_NUMBER_WARNING = 'Country code and phone number can not be empty';
 const MFA_VERIFY_WARNING = 'Verification code can not be empty';
 
-export class LoginAPI {
+export default class LoginAPI {
 
   protected apiUrl = '';
   protected loginAppUrl = '';
@@ -82,21 +82,21 @@ export class LoginAPI {
    * @param {ConstructorParams} params parameters that can pass through constructor
    */
   useParams(params: ConstructorParams): void {
-    if (params.loginApiUrl) {
+    if (params.loginApiUrl && !isEmpty(params.loginApiUrl)) {
       this.apiUrl = params.loginApiUrl;
     }
-    if (params.apiKey) {
+    if (params.apiKey && !isEmpty(params.apiKey)) {
       this.apiKey = params.apiKey;
     }
-    if (params.loginAppUrl) {
+    if (params.loginAppUrl &&!isEmpty(params.loginAppUrl)) {
       this.loginAppUrl = params.loginAppUrl;
     }
   }
 
   private createResetDirectLinks(): any {
     return {
-      reset: `${this.loginAppUrl}?action=resetpassword&apiKey=`,
-      direct: `${this.loginAppUrl}?action=direct&apiKey=`
+      reset: `${urlFormatter(this.loginAppUrl)}?action=resetpassword&apiKey=`,
+      direct: `${urlFormatter(this.loginAppUrl)}?action=direct&apiKey=`
     }
   }
 

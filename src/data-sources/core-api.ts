@@ -38,7 +38,7 @@ const PASS_USER_ID_KEY_WARNING = 'Password, user_id & key can not be empty';
 const EMAIL_KEY_WARNING = 'Email & key values can not be empty';
 const DOMAIN_WARNING = 'Tech Error: Domain is compulsory!';
 
-export class CoreAPI {
+export default class CoreAPI {
   protected apiUrl = '';
   protected appkey = '';
 
@@ -58,10 +58,10 @@ export class CoreAPI {
    * @param {ConstructorParams} params parameters that can pass through constructor
    */
   useParams(params: ConstructorParams): void {
-    if (params.coreApiUrl) {
+    if (params.coreApiUrl && !isEmpty(params.coreApiUrl)) {
       this.apiUrl = params.coreApiUrl;
     }
-    if (params.appkey) {
+    if (params.appkey && !isEmpty(params.appkey)) {
       this.appkey = params.appkey;
     }
   }

@@ -1,5 +1,5 @@
-import { LoginAPI, LoginCredentials, ForgotPassword, ResetPassword, MFAVerify, MFARegister } from "./data-sources/login-api";
-import { CoreAPI, Registration, VerifyRegistration, ConfigParams } from './data-sources/core-api';
+import LoginAPI, { LoginCredentials, ForgotPassword, ResetPassword, MFAVerify, MFARegister } from "./data-sources/login-api";
+import CoreAPI, { Registration, VerifyRegistration, ConfigParams } from './data-sources/core-api';
 
 interface ConstructorParams {
   loginApiUrl?: string;
@@ -65,17 +65,21 @@ export class PracteraSDK {
     }
 
     // Update variables of Login API Instence.
-    this.loginAPI.useParams({
-      loginApiUrl: this.loginApiUrl,
-      loginAppUrl: this.loginAppUrl,
-      apiKey: this.apiKey
-    });
+    if (this.loginAPI) {
+      this.loginAPI.useParams({
+        loginApiUrl: this.loginApiUrl,
+        loginAppUrl: this.loginAppUrl,
+        apiKey: this.apiKey
+      });
+    }
 
     // Update variables of Core API Instence.
-    this.coreAPI.useParams({
-      coreApiUrl: this.coreApiUrl,
-      appkey: this.appkey
-    });
+    if (this.coreAPI) {
+      this.coreAPI.useParams({
+        coreApiUrl: this.coreApiUrl,
+        appkey: this.appkey
+      });
+    }
   }
 
   /**
