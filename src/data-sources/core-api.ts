@@ -1,18 +1,22 @@
-import { makePostApiCall, makeGetApiCall } from '../request';
+import { post, get } from '../request';
 import { urlFormatter, isEmpty } from '../utils';
+interface ConstructorParams {
+  coreApiUrl: string;
+  appkey: string;
+}
 
-interface Registration {
+export interface Registration {
   password: string;
   user_id: number;
   key: string;
 }
 
-interface VerifyRegistration {
+export interface VerifyRegistration {
   email: string;
   key: string;
 }
 
-interface ConfigParams {
+export interface ConfigParams {
   domain: string;
 }
 
@@ -27,69 +31,107 @@ const api = {
   getConfig: '/api/v2/plan/experience/list'
 };
 
-/**
- * Activating & register new user through API endpoint
- * @param apiUrl string - actual API URL.
- * @param apiKey string - actual API URL.
- * @param body json object - login credentials
- * {
- *   password: string;
- *   user_id: number;
- *   key: string;
- * }
- * @returns promise
- */
-export function register(apiUrl: string, apiKey: string, appkey: string, body: Registration): Promise<any> {
-  if (isEmpty(body.password) || typeof body.user_id != "number" || isEmpty(body.key)) {
-    throw new Error("Password, user_id & key must not be empty");
-  }
+// Error and Warning messages.
+const CORE_API_URL_WARNING = 'CORE API URL required to use this service';
+const APP_KEY_WARNING = 'APPKEY required to use this service';
+const PASS_USER_ID_KEY_WARNING = 'Password, user_id & key can not be empty';
+const EMAIL_KEY_WARNING = 'Email & key values can not be empty';
+const DOMAIN_WARNING = 'Tech Error: Domain is compulsory!';
 
-  const fullUrl = urlFormatter(apiUrl, api.register);
-  return makePostApiCall(fullUrl, body, {
-    headers: {
-      apiKey,
-      appkey,
+export default class CoreAPI {
+  protected apiUrl = '';
+  protected appkey = '';
+
+  constructor(params: ConstructorParams) {
+    if (params.coreApiUrl) {
+      this.apiUrl = params.coreApiUrl;
     }
-  });
-}
-
-/**
- * verify user registration by checking email with unique key
- * @param  {string}             apiUrl endpoint domain url
- * @param  {string}             apiKey user's session
- * @param  {string}             appkey app specific id
- * @param  {VerifyRegistration} body   mandatory content required by endpoint
- * @return {Promise<any>}              axios promise respond
- */
-export function verify(apiUrl: string, apiKey: string, appkey: string, body: VerifyRegistration): Promise<any> {
-  if (isEmpty(body.email) || isEmpty(body.key)) {
-    throw new Error("Email & key values must not be empty");
-  }
-
-  const fullUrl = urlFormatter(apiUrl, api.verify);
-  return makePostApiCall(fullUrl, body, {
-    headers: {
-      apiKey,
-      appkey,
+    if (params.appkey) {
+      this.appkey = params.appkey;
     }
-  });
-}
-
-/**
- * This method will call experience list service to get custom config of the experience.
- * @param apiUrl string - actual API URL.
- * @param data json object - params need to pass to the api call
- * {
- *  domain: 'https://app.practera.com'
- * }
- * @returns promise
- */
-export function getConfig(apiUrl: string, data: ConfigParams): Promise<any> {
-  if (isEmpty(data.domain)) {
-    throw new Error('Tech Error: Domain is compulsory!');
   }
-  const fullUrl = urlFormatter(apiUrl, api.getConfig);
-  return makeGetApiCall(fullUrl, {
-    params: data
-  });
+
+  /**
+   * Assign values to instance variables if they passed.
+   * @param {ConstructorParams} params parameters that can pass through constructor
+   */
+  useParams(params: ConstructorParams): void {
+    if (params.coreApiUrl && !isEmpty(params.coreApiUrl)) {
+      this.apiUrl = params.coreApiUrl;
+    }
+    if (params.appkey && !isEmpty(params.appkey)) {
+      this.appkey = params.appkey;
+    }
+  }
+
+  /**
+   * Activating & register new user through API endpoint
+   * @param {Registration} data mandatory content required by endpoint
+   * @return {Promise<any>} axios promise respond
+   */
+  register(data: Registration): Promise<any> {
+    if (isEmpty(this.apiUrl)) {
+      throw new Error(CORE_API_URL_WARNING);
+    }
+    if (isEmpty(this.appkey)) {
+      throw new Error(APP_KEY_WARNING);
+    }
+    if (isEmpty(data.password) || typeof data.user_id != 'number' || isEmpty(data.key)) {
+      throw new Error(PASS_USER_ID_KEY_WARNING);
+    }
+    const fullUrl = urlFormatter(this.apiUrl, api.register);
+    return post(fullUrl, data, {
+      headers: {
+        appkey: this.appkey
+      }
+    });
+  }
+
+  /**
+   * verify user registration by checking email with unique key
+   * @param  {VerifyRegistration} data mandatory content required by endpoint
+   * @return {Promise<any>} axios promise respond
+   */
+  verifyRegistration(data: VerifyRegistration): Promise<any> {
+    if (isEmpty(this.apiUrl)) {
+      throw new Error(CORE_API_URL_WARNING);
+    }
+    if (isEmpty(this.appkey)) {
+      throw new Error(APP_KEY_WARNING);
+    }
+    if (isEmpty(data.email) || isEmpty(data.key)) {
+      throw new Error(EMAIL_KEY_WARNING);
+    }
+    const fullUrl = urlFormatter(this.apiUrl, api.verify);
+    return post(fullUrl, data, {
+      headers: {
+        appkey: this.appkey
+      }
+    });
+  }
+
+  /**
+   * This method will call experience list service to get custom config of the experience.
+   * @param {ConfigParams} data mandatory content required by endpoint
+   * @return {Promise<any>} axios promise respond
+   */
+  getConfig(data: ConfigParams): Promise<any> {
+    if (isEmpty(this.apiUrl)) {
+      throw new Error(CORE_API_URL_WARNING);
+    }
+    if (isEmpty(this.appkey)) {
+      throw new Error(APP_KEY_WARNING);
+    }
+    if (isEmpty(data.domain)) {
+      throw new Error(DOMAIN_WARNING);
+    }
+    const fullUrl = urlFormatter(this.apiUrl, api.getConfig);
+    return get(fullUrl, {
+      headers: {
+        appkey: this.appkey
+      },
+      params: data
+    });
+  }
+
 }

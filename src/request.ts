@@ -42,7 +42,7 @@ function createRequestConfig(httpOptions: any) : AxiosRequestConfig {
  * @param httpOptions Json object - Contains headers and URL parameters
  * @returns Promise
  */
-export function makeGetApiCall(endpoint: string, httpOptions?: any): Promise<any> {
+export function get(endpoint: string, httpOptions?: any): Promise<any> {
   const requestConfig = createRequestConfig(httpOptions);
   return Axios.get(endpoint, requestConfig);
 }
@@ -54,7 +54,7 @@ export function makeGetApiCall(endpoint: string, httpOptions?: any): Promise<any
  * @param httpOptions Json object - Contains headers and URL parameters
  * @returns Promise
  */
-export function makePostApiCall(endpoint: string, data: any, httpOptions?: any): Promise<any> {
+export function post(endpoint: string, data: any, httpOptions?: any): Promise<any> {
   const requestConfig = createRequestConfig(httpOptions);
   return Axios.post(endpoint, data, requestConfig);
 }
@@ -66,7 +66,7 @@ export function makePostApiCall(endpoint: string, data: any, httpOptions?: any):
  * @param httpOptions Json object - Contains headers and URL parameters
  * @returns Promise
  */
-export function makePutApiCall(endpoint: string, data: any, httpOptions?: any): Promise<any> {
+export function put(endpoint: string, data: any, httpOptions?: any): Promise<any> {
   const requestConfig = createRequestConfig(httpOptions);
   return Axios.put(endpoint, data, requestConfig);
 }

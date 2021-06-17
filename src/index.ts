@@ -1,34 +1,25 @@
-import {
-  login,
-  forgotPassword,
-  resetPassword,
-  mfaRegister,
-  mfaSMS,
-  mfaVerify
-} from "./data-sources/login-api";
-import {
-  register,
-  verify as verifyRegistration,
-  getConfig
-} from './data-sources/core-api';
-import { isEmpty } from './utils';
-
-const APIKEY_WARNING = 'PracteraSDK instance must be instantiated with apikey.';
-const LOGIN_API_URL_WARNING = 'LOGIN API URL required to use this service.';
-const CORE_API_URL_WARNING = 'CORE API URL required to use this service.';
-const LOGIN_APP_URL_WARNING = 'LOGIN APP URL required to use this service.';
+import LoginAPI, { LoginCredentials, ForgotPassword, ResetPassword, MFAVerify, MFARegister } from "./data-sources/login-api";
+import CoreAPI, { Registration, VerifyRegistration, ConfigParams } from './data-sources/core-api';
 
 interface ConstructorParams {
   loginApiUrl?: string;
   coreApiUrl?: string;
   chatApiUrl?: string;
   graphqlUrl?: string;
-  apiKey?: string;
   loginAppUrl?: string;
+  apiKey?: string;
+  appkey?: string;
 }
 
 export class PracteraSDK {
+
+  // API Variables
+  private loginAPI!: LoginAPI;
+  private coreAPI!: CoreAPI;
+
+  // class Variables
   protected apiKey = '';
+  protected appkey = '';
   protected loginAppUrl = '';
   protected loginApiUrl = '';
   protected coreApiUrl = '';
@@ -39,6 +30,17 @@ export class PracteraSDK {
    */
   constructor(params: ConstructorParams) {
     this.useConstructorParams(params);
+
+    this.loginAPI = new LoginAPI({
+      loginApiUrl: this.loginApiUrl,
+      loginAppUrl: this.loginAppUrl,
+      apiKey: this.apiKey
+    });
+
+    this.coreAPI = new CoreAPI({
+      coreApiUrl: this.coreApiUrl,
+      appkey: this.appkey
+    });
   }
 
   /**
@@ -52,240 +54,142 @@ export class PracteraSDK {
     if (params.coreApiUrl) {
       this.coreApiUrl = params.coreApiUrl;
     }
+    if (params.loginAppUrl) {
+      this.loginAppUrl = params.loginAppUrl;
+    }
     if (params.apiKey) {
       this.apiKey = params.apiKey;
     }
-    if (params.loginAppUrl) {
-      this.loginAppUrl = params.loginAppUrl;
+    if (params.appkey) {
+      this.appkey = params.appkey;
+    }
+
+    // Update variables of Login API Instence.
+    if (this.loginAPI) {
+      this.loginAPI.useParams({
+        loginApiUrl: this.loginApiUrl,
+        loginAppUrl: this.loginAppUrl,
+        apiKey: this.apiKey
+      });
+    }
+
+    // Update variables of Core API Instence.
+    if (this.coreAPI) {
+      this.coreAPI.useParams({
+        coreApiUrl: this.coreApiUrl,
+        appkey: this.appkey
+      });
     }
   }
 
   /**
    * this method will call login api to log in user with user credentials.
-   * @param data json object - login credentials
+   * @param {LoginCredentials} data login credentials
    * {
    *  username: 'abcd@gmail.com',
    *  password: '1234'
    * }
-   * @returns promise
+   * @return {Promise<any>} axios promise respond
    */
-  login(data: {
-    username: string;
-    password: string;
-  }): Promise<any> {
-    if (isEmpty(this.loginApiUrl)) {
-      throw new Error(LOGIN_API_URL_WARNING);
-    }
-    if (isEmpty(data.username) || isEmpty(data.password)) {
-      throw new Error('username and password cannot be empty.');
-    }
 
-    return login(this.loginApiUrl, data);
+  login(data: LoginCredentials): Promise<any> {
+    return this.loginAPI.login(data);
   }
 
   /**
    * this method will call forgot password api to send password rest email to provided email address.
-   * @param data json object - user registered email address and global login url
+   * @param {ForgotPassword} data user registered email address
    * {
    *  email: 'abcd@gmail.com'
    * }
-   * @returns promise
+   * @return {Promise<any>} axios promise respond
    */
-  forgotPassword(data: {
-    email: string;
-  }): Promise<any> {
-    if (isEmpty(this.loginApiUrl)) {
-      throw new Error(LOGIN_API_URL_WARNING);
-    }
-    if (isEmpty(this.loginAppUrl)) {
-      throw new Error(LOGIN_APP_URL_WARNING);
-    }
-    if (isEmpty(data.email)) {
-      throw new Error('Email cannot be empty.');
-    }
-    return forgotPassword(this.loginApiUrl, {
-      email: data.email,
-      globalLoginUrl: this.loginAppUrl
-    });
+  forgotPassword(data: ForgotPassword): Promise<any> {
+    return this.loginAPI.forgotPassword(data);
   }
 
   /**
    * this method will call reset password api to reset user password.
-   * @param data json object - User new password and reset password apikey came in email.
+   * @param {ResetPassword} data user new password.
    * {
    *  password: '1234'
    * }
-   * @returns promise
+   * @return {Promise<any>} axios promise respond
    */
-  resetPassword(data: {
-    password: string;
-  }): Promise<any> {
-    if (isEmpty(this.loginApiUrl)) {
-      throw new Error(LOGIN_API_URL_WARNING);
-    }
-    if (isEmpty(this.apiKey)) {
-      throw new Error(APIKEY_WARNING);
-    }
-
-    if (isEmpty(data.password)) {
-      throw new Error('Password cannot be empty.');
-    }
-
-    return resetPassword(this.loginApiUrl, this.apiKey, {
-      password: data.password,
-    });
+  resetPassword(data: ResetPassword): Promise<any> {
+    return this.loginAPI.resetPassword(data);
   }
 
   /**
    * register user through Register endpoint
-   * @param  data json object - User new password, user_id & registration key code
+   * @param {Registration} data user new password, user_id & registration key code
    * {
-   *  appkey: 'abcd1234',
    *  password: '1234',
    *  user_id: 120005,
    *  key: 'wesf2323',
    * }
-   * @returns promise
+   * @return {Promise<any>} axios promise respond
    */
-  register(data: {
-    appkey: string;
-    password: string;
-    user_id: number;
-    key: string;
-  }): Promise<any> {
-    if (isEmpty(this.coreApiUrl)) {
-      throw new Error(CORE_API_URL_WARNING);
-    }
-    if (isEmpty(this.apiKey)) {
-      throw new Error(APIKEY_WARNING);
-    }
-
-    const { password, user_id, key } = data;
-    return register(this.coreApiUrl, this.apiKey, data.appkey, {
-      password,
-      user_id,
-      key,
-    });
+  register(data: Registration): Promise<any> {
+    return this.coreAPI.register(data);
   }
 
   /**
    * verify current registration validity
-   * @param  data json object - User new password, user_id & registration key code
+   * @param {VerifyRegistration} data user registered & registration key code
    * {
-   *  appkey: 'abcd1234',
    *  email: 'test@email.com',
    *  key: 12345,
    * }
-   * @returns promise
+   * @return {Promise<any>} axios promise respond
    */
-  verifyRegistration(data: {
-    appkey: string;
-    email: string;
-    key: string;
-  }): Promise<any> {
-    if (isEmpty(this.coreApiUrl)) {
-      throw new Error(CORE_API_URL_WARNING);
-    }
-    if (isEmpty(this.apiKey)) {
-      throw new Error(APIKEY_WARNING);
-    }
-
-    const { email, key } = data;
-    return verifyRegistration(this.coreApiUrl, this.apiKey, data.appkey, {
-      email,
-      key,
-    });
+  verifyRegistration(data: VerifyRegistration): Promise<any> {
+    return this.coreAPI.verifyRegistration(data);
   }
 
   /**
    * This method will call mfa register api to register user phone number in the system.
-   * @param data json object - country code of the mobile number, real mobile number without country code
+   * @param {MFARegister} data country code of the mobile number, real mobile number without country code
    * {
    *  countryCode: '+94',
    *  number: '651684654',
    * }
-   * @returns promise
+   * @return {Promise<any>} axios promise respond
    */
-  mfaRegister(data: {
-    countryCode: string;
-    number: string;
-  }): Promise<any> {
-    if (isEmpty(this.loginApiUrl)) {
-      throw new Error(LOGIN_API_URL_WARNING);
-    }
-    if (isEmpty(this.apiKey)) {
-      throw new Error(APIKEY_WARNING);
-    }
-
-    if (isEmpty(data.countryCode) || isEmpty(data.number)) {
-      throw new Error('Country code and phone number can not be empty.');
-    }
-
-    return mfaRegister(this.loginApiUrl, this.apiKey, {
-      countryCode: data.countryCode,
-      number: data.number,
-    });
+  mfaRegister(data: MFARegister): Promise<any> {
+    return this.loginAPI.mfaRegister(data);
   }
 
   /**
    * This method will call mfa sms api to send sms to a user.
-   * @returns promise
+   * @return {Promise<any>} axios promise respond
    */
   mfaSMS(): Promise<any> {
-    if (isEmpty(this.loginApiUrl)) {
-      throw new Error(LOGIN_API_URL_WARNING);
-    }
-    if (isEmpty(this.apiKey)) {
-      throw new Error(APIKEY_WARNING);
-    }
-    return mfaSMS(this.loginApiUrl, this.apiKey);
+    return this.loginAPI.mfaSMS();
   }
 
   /**
    * This method will call mfa verify api to verify the codes sending by sms to user.
-   * @param data json object - code user type, that came as sms and user apiKey
+   * @param {MFAVerify} data code received as sms
    * {
    *  code: '1234',
    * }
-   * @returns promise
+   * @return {Promise<any>} axios promise respond
    */
-  mfaVerify(data: {
-    code: string;
-  }): Promise<any> {
-    if (isEmpty(this.loginApiUrl)) {
-      throw new Error(LOGIN_API_URL_WARNING);
-    }
-    if (isEmpty(this.apiKey)) {
-      throw new Error(APIKEY_WARNING);
-    }
-    if (isEmpty(data.code)) {
-      throw new Error('Verification code can not be empty');
-    }
-
-    return mfaVerify(this.loginApiUrl, this.apiKey, {
-      code: data.code,
-    });
+  mfaVerify(data: MFAVerify): Promise<any> {
+    return this.loginAPI.mfaVerify(data);
   }
 
   /**
    * This method will call experience list api to get custom config of the experience.
-   * @param apiUrl string - actual API URL.
-   * @param data json object - params need to pass to the api call
+   * @param {ConfigParams} data domain of the app
    * {
    *  domain: 'https://app.practera.com'
    * }
-   * @returns promise
+   * @return {Promise<any>} axios promise respond
    */
-  getCustomConfig(data: {
-    domain: string;
-  }): Promise<any> {
-    if (isEmpty(this.coreApiUrl)) {
-      throw new Error(CORE_API_URL_WARNING);
-    }
-    if (isEmpty(data.domain)) {
-      throw new Error('Tech Error: Domain is compulsory!');
-    }
-    return getConfig(this.coreApiUrl, data);
+  getCustomConfig(data: ConfigParams): Promise<any> {
+    return this.coreAPI.getConfig(data);
   }
 
 }
