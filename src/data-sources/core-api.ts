@@ -43,14 +43,12 @@ export default class CoreAPI {
   protected appkey = '';
 
   constructor(params: ConstructorParams) {
-    if (isEmpty(params.coreApiUrl)) {
-      throw new Error(CORE_API_URL_WARNING);
+    if (params.coreApiUrl) {
+      this.apiUrl = params.coreApiUrl;
     }
-    if (isEmpty(params.appkey)) {
-      throw new Error(APP_KEY_WARNING);
+    if (params.appkey) {
+      this.appkey = params.appkey;
     }
-    this.apiUrl = params.coreApiUrl;
-    this.appkey = params.appkey;
   }
 
   /**
@@ -72,6 +70,12 @@ export default class CoreAPI {
    * @return {Promise<any>} axios promise respond
    */
   register(data: Registration): Promise<any> {
+    if (isEmpty(this.apiUrl)) {
+      throw new Error(CORE_API_URL_WARNING);
+    }
+    if (isEmpty(this.appkey)) {
+      throw new Error(APP_KEY_WARNING);
+    }
     if (isEmpty(data.password) || typeof data.user_id != 'number' || isEmpty(data.key)) {
       throw new Error(PASS_USER_ID_KEY_WARNING);
     }
@@ -89,6 +93,12 @@ export default class CoreAPI {
    * @return {Promise<any>} axios promise respond
    */
   verifyRegistration(data: VerifyRegistration): Promise<any> {
+    if (isEmpty(this.apiUrl)) {
+      throw new Error(CORE_API_URL_WARNING);
+    }
+    if (isEmpty(this.appkey)) {
+      throw new Error(APP_KEY_WARNING);
+    }
     if (isEmpty(data.email) || isEmpty(data.key)) {
       throw new Error(EMAIL_KEY_WARNING);
     }
@@ -106,6 +116,12 @@ export default class CoreAPI {
    * @return {Promise<any>} axios promise respond
    */
   getConfig(data: ConfigParams): Promise<any> {
+    if (isEmpty(this.apiUrl)) {
+      throw new Error(CORE_API_URL_WARNING);
+    }
+    if (isEmpty(this.appkey)) {
+      throw new Error(APP_KEY_WARNING);
+    }
     if (isEmpty(data.domain)) {
       throw new Error(DOMAIN_WARNING);
     }

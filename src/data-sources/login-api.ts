@@ -63,10 +63,9 @@ export default class LoginAPI {
   protected apiKey = '';
 
   constructor(params: ConstructorParams) {
-    if (isEmpty(params.loginApiUrl)) {
-      throw new Error(LOGIN_API_URL_WARNING);
+    if (params.loginApiUrl) {
+      this.apiUrl = params.loginApiUrl;
     }
-    this.apiUrl = params.loginApiUrl;
 
     if (params.apiKey) {
       this.apiKey = params.apiKey;
@@ -107,6 +106,9 @@ export default class LoginAPI {
    * @return {Promise<any>} axios promise respond
    */
   login(data: LoginCredentials): Promise<any> {
+    if (isEmpty(this.apiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
+    }
     if (isEmpty(data.username) || isEmpty(data.password)) {
       throw new Error(USERNAME_PASS_WARNING);
     }
@@ -120,6 +122,9 @@ export default class LoginAPI {
    * @return {Promise<any>} axios promise respond
    */
   forgotPassword(data: ForgotPassword): Promise<any> {
+    if (isEmpty(this.apiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
+    }
     if (isEmpty(this.loginAppUrl)) {
       throw new Error(LOGIN_APP_URL_WARNING);
     }
@@ -142,6 +147,9 @@ export default class LoginAPI {
    * @return {Promise<any>} axios promise respond
    */
   resetPassword(data: ResetPassword): Promise<any> {
+    if (isEmpty(this.apiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
+    }
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
@@ -161,6 +169,9 @@ export default class LoginAPI {
    * @return {Promise<any>} axios promise respond
    */
   mfaSMS(): Promise<any> {
+    if (isEmpty(this.apiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
+    }
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
@@ -178,6 +189,9 @@ export default class LoginAPI {
    * @return {Promise<any>} axios promise respond
    */
   mfaRegister(data: MFARegister): Promise<any> {
+    if (isEmpty(this.apiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
+    }
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }
@@ -198,6 +212,9 @@ export default class LoginAPI {
    * @return {Promise<any>} axios promise respond
    */
   mfaVerify(data: MFAVerify): Promise<any> {
+    if (isEmpty(this.apiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
+    }
     if (isEmpty(this.apiKey)) {
       throw new Error(APIKEY_WARNING);
     }

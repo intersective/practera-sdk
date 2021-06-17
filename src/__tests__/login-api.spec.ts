@@ -1,13 +1,11 @@
 import { mocked } from 'ts-jest/utils';
-import { LoginAPI } from '../data-sources/login-api';
 import { post, put } from '../request';
 jest.mock('../request');
-import { has, isEmpty, urlFormatter } from '../utils';
-jest.mock('../utils');
-import { DUMMY_PASSWORD } from './mock-data';
+import { DUMMY_PASSWORD, DUMMY_STACKS } from './mock-data';
+import LoginAPI from '../data-sources/login-api';
 
 
-describe('registration-service', () => {
+describe('when testing login-api', () => {
 
   const APIKEY_WARNING = 'PracteraSDK instance must be instantiated with apikey';
   const LOGIN_API_URL_WARNING = 'LOGIN API URL required to use this service';
@@ -19,192 +17,291 @@ describe('registration-service', () => {
   const MFA_VERIFY_WARNING = 'Verification code can not be empty';
 
   const API_URL = 'testAPI.com/';
-  const APIKEY = 'appkey';
-  const LOGINAPPURL = 'testAPP.com/'
+  const APIKEY = 'apikey';
+  const LOGINAPPURL = 'testAPP.com'
 
-  const loginAPI = new LoginAPI({loginApiUrl: API_URL, apiKey: APIKEY, loginAppUrl: LOGINAPPURL});
-
-  const mockedPostCall = mocked(post, true);
-  const mockedPutCall = mocked(put, true);
-
-  const mockedurlFormatter = mocked(urlFormatter, true);
+  let loginAPI: any;
 
   beforeEach(() => {
-    // Clear all instances and calls to constructor and all methods:
-    mockedPostCall.mockClear();
-    mockedPutCall.mockClear();
-    mockedurlFormatter.mockClear();
+    loginAPI = new LoginAPI({ loginApiUrl: API_URL, apiKey: APIKEY, loginAppUrl: LOGINAPPURL });
+  });
+
+  describe('useParams()', () => {
+    it('should update class variables with new values', () => {
+      loginAPI.useParams({ loginApiUrl: 'abc.com', apiKey: '1234', loginAppUrl: 'login.com' });
+      expect(loginAPI["apiUrl"]).toEqual('abc.com');
+      expect(loginAPI["apiKey"]).toEqual('1234');
+      expect(loginAPI["loginAppUrl"]).toEqual('login.com');
+    });
+
+    it('should not update class variables if pass values empty', () => {
+      loginAPI.useParams({ loginApiUrl: '', apiKey: '', loginAppUrl: '' });
+      expect(loginAPI["apiUrl"]).toEqual(API_URL);
+      expect(loginAPI["apiKey"]).toEqual(APIKEY);
+      expect(loginAPI["loginAppUrl"]).toEqual(LOGINAPPURL);
+    });
   });
 
   describe('login()', () => {
+
+    it('should throw errors login API URL is empty', () => {
+      loginAPI = new LoginAPI({ loginApiUrl: '', apiKey: APIKEY, loginAppUrl: LOGINAPPURL });
+      const t = () => {
+        loginAPI.login({
+          username: 'testUser',
+          password: DUMMY_PASSWORD
+        });
+      };
+      expect(t).toThrow(LOGIN_API_URL_WARNING);
+    });
+
     it('should call request service with testAPi.com/login and data', () => {
-      mockedurlFormatter.mockReturnValueOnce('https://testAPI.com/login');
-      mockedPostCall.mockReturnValueOnce(new Promise<void>((resolve, reject) => {
-        resolve();
-      }));
       const data = {
         username: 'testUser',
         password: DUMMY_PASSWORD
       };
       loginAPI.login(data);
-      expect(urlFormatter).toHaveBeenCalledWith(API_URL, 'login');
-      expect(mockedPostCall).toHaveBeenCalledWith('https://testAPI.com/login', data);
+      expect(post).toHaveBeenCalledWith('https://testAPI.com/login', data);
+    });
+
+    it('should throw error if username is empty', () => {
+      const data = {
+        username: '',
+        password: DUMMY_PASSWORD
+      };
+      const t = () => {
+        loginAPI.login(data);
+      };
+      expect(t).toThrow(USERNAME_PASS_WARNING);
+    });
+
+    it('should throw error if password is empty', () => {
+      const t = () => {
+        loginAPI.login({
+          username: 'testUser',
+          password: ''
+        });
+      };
+      expect(t).toThrow(USERNAME_PASS_WARNING);
+    });
+  });
+
+  describe('When testing forgotPassword()', () => {
+
+    it('should throw errors login API URL is empty', () => {
+      loginAPI = new LoginAPI({ loginApiUrl: '', apiKey: APIKEY, loginAppUrl: LOGINAPPURL });
+      const t = () => {
+        loginAPI.forgotPassword({
+          email: 'abcd@test.com'
+        });
+      };
+      expect(t).toThrow(LOGIN_API_URL_WARNING);
+    });
+
+    it('should call request service with testAPI.com/forgotPassword and data', () => {
+      const data = {
+        email: 'abcd@test.com'
+      };
+      const expectPassingData = {
+        email: 'abcd@test.com',
+        directLink: 'https://testAPP.com?action=direct&apiKey=',
+        resetLink: 'https://testAPP.com?action=resetpassword&apiKey='
+      }
+      loginAPI.forgotPassword(data);
+      expect(post).toHaveBeenCalledWith('https://testAPI.com/forgotPassword', expectPassingData);
+    });
+
+    it('should throw error if email is empty', () => {
+      const t = () => {
+        loginAPI.forgotPassword({
+          email: ''
+        });
+      };
+      expect(t).toThrow(EMAIL_EMPTY_WARNING);
+    });
+
+    it('should throw error if global login URL is empty', () => {
+      loginAPI = new LoginAPI({ loginApiUrl: API_URL, apiKey: APIKEY, loginAppUrl: '' });
+      const t = () => {
+        loginAPI.forgotPassword({
+          email: 'abcd@test.com'
+        });
+      };
+      expect(t).toThrow(LOGIN_APP_URL_WARNING);
+    });
+  });
+
+  describe('When testing resetPassword()', () => {
+
+    it('should throw errors login API URL is empty', () => {
+      loginAPI = new LoginAPI({ loginApiUrl: '', apiKey: APIKEY, loginAppUrl: LOGINAPPURL });
+      const t = () => {
+        loginAPI.resetPassword({
+          password: DUMMY_PASSWORD
+        });
+      };
+      expect(t).toThrow(LOGIN_API_URL_WARNING);
+    });
+
+    it('should call request service with testAPI.com/user and data', () => {
+      const data = {
+        password: DUMMY_PASSWORD
+      };
+      const expectPassingHttpOptions = {
+        headers: {
+          apiKey: APIKEY
+        }
+      };
+      loginAPI.resetPassword(data);
+      expect(put).toHaveBeenCalledWith('https://testAPI.com/user', data, expectPassingHttpOptions);
+    });
+
+    it('should throw error if apiKey is empty', () => {
+      loginAPI = new LoginAPI({ loginApiUrl: API_URL, apiKey: '' });
+      const t = () => {
+        loginAPI.resetPassword({
+          password: DUMMY_PASSWORD
+        });
+      };
+      expect(t).toThrow(APIKEY_WARNING);
+    });
+
+    it('should throw error if password is empty', () => {
+      const t = () => {
+        loginAPI.resetPassword({
+          password: ''
+        });
+      };
+      expect(t).toThrow(PASSWORD_EMPTY_WARNING);
+    });
+  });
+
+  describe('When testing mfaSMS()', () => {
+
+    it('should throw errors login API URL is empty', () => {
+      loginAPI = new LoginAPI({ loginApiUrl: '', apiKey: APIKEY, loginAppUrl: LOGINAPPURL });
+      const t = () => {
+        loginAPI.mfaSMS();
+      };
+      expect(t).toThrow(LOGIN_API_URL_WARNING);
+    });
+
+    it('should throw error if required data empty', async () => {
+      loginAPI = new LoginAPI({ loginApiUrl: API_URL, apiKey: '' });
+      const t = () => {
+        loginAPI.mfaSMS();
+      };
+      expect(t).toThrow(APIKEY_WARNING);
+    });
+
+    it('should call mfa sms service with full API URL and data', () => {
+      loginAPI.mfaSMS();
+      expect(post).toHaveBeenCalledWith('https://testAPI.com/mfa/sms', {}, {
+        headers: {
+          apiKey: APIKEY
+        }
+      });
+    });
+  });
+
+  describe('When testing mfaRegister()', () => {
+
+    it('should throw errors login API URL is empty', () => {
+      loginAPI = new LoginAPI({ loginApiUrl: '', apiKey: APIKEY, loginAppUrl: LOGINAPPURL });
+      const data = {
+        countryCode: '+94',
+        number: '23244343'
+      }
+      const t = () => {
+        loginAPI.mfaRegister(data);
+      };
+      expect(t).toThrow(LOGIN_API_URL_WARNING);
+    });
+
+    it('should throw error if apiKey is empty', async () => {
+      const data = {
+        countryCode: '+94',
+        number: '1212323i'
+      }
+      loginAPI = new LoginAPI({ loginApiUrl: API_URL, apiKey: '' });
+      const t = () => {
+        loginAPI.mfaRegister(data);
+      };
+      expect(t).toThrow(APIKEY_WARNING);
+    });
+
+    it('should throw error if required data is empty', async () => {
+      const data = {
+        countryCode: '+94',
+        number: ''
+      }
+      const t = () => {
+        loginAPI.mfaRegister(data);
+      };
+      expect(t).toThrow(COUNTRY_CODE_NUMBER_WARNING);
+    });
+
+    it('should call mfa register service with full API URL and data', () => {
+      const data = {
+        countryCode: '+94',
+        number: '122323'
+      }
+      loginAPI.mfaRegister(data);
+      expect(post).toHaveBeenCalledWith('https://testAPI.com/mfa/register', data, {
+        headers: {
+          apiKey: APIKEY
+        }
+      });
+    });
+  });
+
+  describe('When testing mfaVerify()', () => {
+
+    it('should throw errors login API URL is empty', () => {
+      loginAPI = new LoginAPI({ loginApiUrl: '', apiKey: APIKEY, loginAppUrl: LOGINAPPURL });
+      const data = {
+        code: '2323'
+      }
+      const t = () => {
+        loginAPI.mfaVerify(data);
+      };
+      expect(t).toThrow(LOGIN_API_URL_WARNING);
+    });
+
+    it('should throw error ifapiKey is empty', async () => {
+      const data = {
+        code: '12345',
+      };
+
+      loginAPI = new LoginAPI({ loginApiUrl: API_URL, apiKey: '' });
+      const t = () => {
+        loginAPI.mfaVerify(data);
+      };
+      expect(t).toThrow(APIKEY_WARNING);
+    });
+
+    it('should throw error if required data is empty', async () => {
+      const data = {
+        code: ''
+      }
+
+      const t = () => {
+        loginAPI.mfaVerify(data);
+      };
+      expect(t).toThrow(MFA_VERIFY_WARNING);
+    });
+
+    it('should call mfa verify service with full API URL and data', () => {
+      const data = {
+        code: '12345'
+      };
+      loginAPI.mfaVerify(data);
+      expect(post).toHaveBeenCalledWith('https://testAPI.com/mfa/verify', data, {
+        headers: {
+          apiKey: APIKEY
+        }
+      });
     });
   });
 
 });
-
-// describe('When testing forgotPassword()', () => {
-//   it('should call request service with testAPI.com/forgotPassword and data', () => {
-//     spyOn(utilService,'urlFormatter').and.returnValue('https://testAPI.com/forgotPassword');
-//     spyOn(requestService,'post').and.returnValue(new Promise<void>((resolve, reject) => {
-//       resolve();
-//     }));
-//     const data = {
-//       email: 'abcd@test.com',
-//       globalLoginUrl: 'https://login.practera.com'
-//     };
-//     const requestData = {
-//       email: 'abcd@test.com',
-//       directLink: 'https://login.practera.com?action=direct&apiKey=',
-//       resetLink: 'https://login.practera.com?action=resetpassword&apiKey='
-//     }
-//     forgotPassword(API_URL, data);
-//     expect(utilService.urlFormatter).toHaveBeenCalledWith(API_URL, 'forgotPassword');
-//     expect(requestService.post).toHaveBeenCalledWith('https://testAPI.com/forgotPassword', requestData);
-//   });
-// });
-
-// describe('When testing resetPassword()', () => {
-//   it('should call request service with testAPI.com/user and data', () => {
-//     spyOn(utilService,'urlFormatter').and.returnValue('https://testAPI.com/user');
-//     spyOn(requestService,'put').and.returnValue(new Promise<void>((resolve, reject) => {
-//       resolve();
-//     }));
-//     const apiKey = 'axcd';
-//     const body = {
-//       password: DUMMY_PASSWORD
-//     };
-//     resetPassword(API_URL, apiKey, body);
-//     expect(utilService.urlFormatter).toHaveBeenCalledWith(API_URL, 'user');
-//     expect(requestService.put).toHaveBeenCalledWith('https://testAPI.com/user', {
-//       password: DUMMY_PASSWORD
-//     }, {
-//       headers: {
-//         apiKey: apiKey
-//       }
-//     });
-//   });
-// });
-
-// describe('When testing mfaSMS()', () => {
-//   it('should throw error if required data empty', async () => {
-//     try {
-//       await mfaSMS(API_URL, '');
-//     } catch (error) {
-//       expect(error.message).toEqual(API_WARNING);
-//     }
-//   });
-//   it('should call mfa sms service with full API URL and data', () => {
-//     spyOn(utilService,'urlFormatter').and.returnValue('https://testAPI.com/mfa/sms');
-//     spyOn(requestService,'post').and.returnValue(new Promise<void>((resolve, reject) => {
-//       resolve();
-//     }));
-//     const apiKey = 'axcd';
-//     mfaSMS(API_URL, apiKey);
-//     expect(utilService.urlFormatter).toHaveBeenCalledWith(API_URL, 'mfa/sms');
-//     expect(requestService.post).toHaveBeenCalledWith('https://testAPI.com/mfa/sms', {}, {
-//       headers: {
-//         apiKey: apiKey
-//       }
-//     });
-//   });
-// });
-
-// describe('When testing mfaRegister()', () => {
-//   it('should throw error if api url or api key is empty', async () => {
-//     const body = {
-//       countryCode: '+94',
-//       number: '1212323i'
-//     }
-//     try {
-//       await mfaRegister(API_URL, '', body);
-//     } catch (error) {
-//       expect(error.message).toEqual(API_WARNING);
-//     }
-//   });
-
-//   it('should throw error if body data is empty', async () => {
-//     const body = {
-//       countryCode: '+94',
-//       number: ''
-//     }
-//     try {
-//       await mfaRegister(API_URL, 'xcvb', body);
-//     } catch (error) {
-//       expect(error.message).toEqual('Country code and phone number can not be empty');
-//     }
-//   });
-
-//   it('should call mfa register service with full API URL and data', () => {
-//     spyOn(utilService,'urlFormatter').and.returnValue('https://testAPI.com/mfa/register');
-//     spyOn(requestService,'post').and.returnValue(new Promise<void>((resolve, reject) => {
-//       resolve();
-//     }));
-//     const apiKey = 'axcd';
-//     const body = {
-//       countryCode: '+94',
-//       number: '122323'
-//     }
-//     mfaRegister(API_URL, apiKey, body);
-//     expect(utilService.urlFormatter).toHaveBeenCalledWith(API_URL, 'mfa/register');
-//     expect(requestService.post).toHaveBeenCalledWith('https://testAPI.com/mfa/register', body, {
-//       headers: {
-//         apiKey: apiKey
-//       }
-//     });
-//   });
-// });
-
-// describe('When testing mfaVerify()', () => {
-//   it('should throw error if api url or api key is empty', async () => {
-//     const body = {
-//       code: '12345',
-//     };
-
-//     try {
-//       await mfaVerify(API_URL, '', body);
-//     } catch (error) {
-//       expect(error.message).toEqual(API_WARNING);
-//     }
-//   });
-
-//   it('should throw error if body data is empty', async () => {
-//     const body = {
-//       code: ''
-//     }
-//     try {
-//       await mfaVerify(API_URL, 'xcvb', body);
-//     } catch (error) {
-//       expect(error.message).toEqual('Verification code can not be empty');
-//     }
-//   });
-
-//   it('should call mfa verify service with full API URL and data', () => {
-//     spyOn(utilService,'urlFormatter').and.returnValue('https://testAPI.com/mfa/verify');
-//     spyOn(requestService,'post').and.returnValue(new Promise<void>((resolve, reject) => {
-//       resolve();
-//     }));
-//     const apiKey = 'axcd';
-//     const body = {
-//       code: '12345'
-//     }
-//     mfaVerify(API_URL, apiKey, body);
-//     expect(utilService.urlFormatter).toHaveBeenCalledWith(API_URL, 'mfa/verify');
-//     expect(requestService.post).toHaveBeenCalledWith('https://testAPI.com/mfa/verify', body, {
-//       headers: {
-//         apiKey: apiKey
-//       }
-//     });
-//   });
-// });

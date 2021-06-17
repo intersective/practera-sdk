@@ -1,252 +1,171 @@
-// import { mocked } from 'ts-jest/utils';
-// import { PracteraSDK } from '../index';
-// import { DUMMY_PASSWORD } from './mock-data';
-// import * as loginAPI from '../data-sources/login-api';
+import { mocked } from 'ts-jest/utils';
+import { DUMMY_PASSWORD, DUMMY_STACKS } from './mock-data';
+import LoginAPI from '../data-sources/login-api';
+import CoreAPI from '../data-sources/core-api';
+import { PracteraSDK } from '../index';
+jest.mock('../data-sources/login-api.ts');
+jest.mock('../data-sources/core-api.ts');
 
-// import * as coreAPI from '../data-sources/core-api';
-// jest.mock('../data-sources/core-api.ts');
-// const SAMPLE_APIKEY = 'sample-apikey';
-// const API_URL = 'testAPI.com/';
-// const APP_KEY = 'test-appkey';
-// const TEST_EMAIL = 'test@email.com';
-// const APIKEY_WARNING = 'PracteraSDK instance must be instantiated with apikey.';
-// const LOGIN_API_URL_WARNING = 'LOGIN API URL required to use this service.';
-// const CORE_API_URL_WARNING = 'CORE API URL required to use this service.';
-// const LOGIN_APP_URL_WARNING = 'LOGIN APP URL required to use this service.';
+const APIKEY = 'apikey';
+const LOGIN_API_URL = 'testLoginAPI.com/';
+const CORE_API_URL = 'testCoreAPI.com/';
+const LOGIN_APP_URL = 'testLoginAPP.com/'
+const APP_KEY = 'test-appkey';
+const TEST_EMAIL = 'test@email.com';
 
-// describe('When testing login()', () => {
-//   beforeEach(() => {
-//     spyOn(loginAPI,'login').and.returnValue(new Promise<void>((resolve, reject) => {
-//       resolve();
-//     }));
-//   });
+// let coreAPI: any;
+// let loginAPI: any;
+let sdk: any;
 
-//   it('should call login service with correct data', () => {
-//     const data = {
-//       username: 'testUser',
-//       password: DUMMY_PASSWORD
-//     };
-//     const sdk = new PracteraSDK({loginApiUrl: API_URL});
-//     sdk.login(data);
-//     expect(loginAPI.login).toHaveBeenCalledWith(API_URL, data);
-//   });
+beforeEach(() => {
+  sdk = new PracteraSDK({
+    loginApiUrl: LOGIN_API_URL,
+    coreApiUrl: CORE_API_URL,
+    loginAppUrl: LOGIN_APP_URL,
+    apiKey: APIKEY,
+    appkey: APP_KEY});
+});
 
-//   it('should throw error when required data N/A', async () => {
-//     const data = {
-//       username: '',
-//       password: DUMMY_PASSWORD
-//     };
-//     const sdk = new PracteraSDK({loginApiUrl: API_URL});
-//     try {
-//       await sdk.login(data);
-//     } catch (err) {
-//       expect(err.message).toEqual('username and password cannot be empty.');
-//     }
-//   });
-//   it('should throw error when loginApiUrl N/A', async () => {
-//     const data = {
-//       username: 'testUser',
-//       password: DUMMY_PASSWORD
-//     };
-//     const sdk = new PracteraSDK({});
-//     try {
-//       await sdk.login(data);
-//     } catch (err) {
-//       expect(err.message).toEqual(LOGIN_API_URL_WARNING);
-//     }
-//   });
-// });
+describe('When testing login()', () => {
 
-// describe('When testing forgotPassword()', () => {
-//   let sdk: PracteraSDK;
-//   beforeAll(() => {
-//     spyOn(loginAPI, 'forgotPassword').and.returnValue(new Promise<void>((resolve, reject) => {
-//       resolve();
-//     }));
-//   });
+  it('should call login API login service with correct data', () => {
+    const data = {
+      username: 'testUser',
+      password: DUMMY_PASSWORD
+    };
+    sdk.login(data);
+    expect(sdk['loginAPI'].login).toHaveBeenCalledWith(data);
+  });
 
-//   it('should call login service with correct data', () => {
-//     sdk = new PracteraSDK({loginApiUrl: API_URL, loginAppUrl: 'loginApp.com'});
-//     const data = {
-//       email: 'abcd@test.com'
-//     };
-//     const expectData = {
-//       email: 'abcd@test.com',
-//       globalLoginUrl: 'loginApp.com'
-//     }
-//     sdk.forgotPassword(data);
-//     expect(loginAPI.forgotPassword).toHaveBeenCalledWith(API_URL, expectData);
-//   });
+  it('should return correct stack data', async () => {
+    sdk['loginAPI'].login = jest.fn().mockResolvedValueOnce({
+      apikey: '1234',
+      stacks: DUMMY_STACKS
+    });
+    const data = {
+      username: 'testUser',
+      password: DUMMY_PASSWORD
+    };
+    await expect(sdk.login(data)).resolves.toEqual({
+      apikey: '1234',
+      stacks: DUMMY_STACKS
+    });
+  });
 
-//   it('should throw error if email is missing', async () => {
-//     const WARNING_MSG = 'Email cannot be empty.';
-//     sdk = new PracteraSDK({loginApiUrl: API_URL, loginAppUrl: 'loginApp.com'});
-//     const testData = async (data1: any) => {
-//       try {
-//         await sdk.forgotPassword(data1);
-//       } catch (err) {
-//         expect(err.message).toEqual(WARNING_MSG);
-//       }
-//     };
+  it('should return error data if password compromised', async () => {
+    sdk['loginAPI'].login = jest.fn().mockRejectedValueOnce({
+      status: 400,
+      error: {passwordCompromised: true}
+    });
+    const data = {
+      username: 'testUser',
+      password: DUMMY_PASSWORD
+    };
+    await expect(sdk.login(data)).rejects.toEqual({
+      status: 400,
+      error: {passwordCompromised: true}
+    });
+  });
+});
 
-//     const data = {
-//       email: '',
-//     };
-//     testData(data);
-//   });
+describe('When testing forgotPassword()', () => {
 
-//   it('should throw error if loginAppUrl is missing', async () => {
-//     sdk = new PracteraSDK({loginApiUrl: API_URL});
-//     const testData = async (data2: any) => {
-//       try {
-//         await sdk.forgotPassword(data2);
-//       } catch (err) {
-//         expect(err.message).toEqual(LOGIN_APP_URL_WARNING);
-//       }
-//     };
+  it('should call login API forgotpassword service with correct data', () => {
+    const data = {
+      email: 'abcd@test.com'
+    };
+    sdk.forgotPassword(data);
+    expect(sdk['loginAPI'].forgotPassword).toHaveBeenCalledWith(data);
+  });
 
-//     const data = {
-//       email: 'test@emai.com'
-//     };
-//     testData(data);
-//   });
+  it('should return correct data from login API forgotpassword service success', async () => {
+    sdk['loginAPI'].forgotPassword = jest.fn().mockResolvedValueOnce({
+      message: "operation successful"
+    });
+    const data = {
+      email: 'abcd@test.com'
+    };
+    await expect(sdk.forgotPassword(data)).resolves.toEqual({
+      message: "operation successful"
+    });
+  });
 
-//   it('should throw error if loginApiUrl is missing', async () => {
-//     sdk = new PracteraSDK({loginAppUrl: API_URL});
-//     const testData = async (data2: any) => {
-//       try {
-//         await sdk.forgotPassword(data2);
-//       } catch (err) {
-//         expect(err.message).toEqual(LOGIN_API_URL_WARNING);
-//       }
-//     };
+  it('should return error data if forgot password call too frequently', async () => {
+    sdk['loginAPI'].forgotPassword = jest.fn().mockRejectedValueOnce({
+      error: {
+        type: 'reset_too_frequently'
+      }
+    });
+    const data = {
+      email: 'abcd@test.com'
+    };
+    await expect(sdk.forgotPassword(data)).rejects.toEqual({
+      error: {type: 'reset_too_frequently'}
+    });
+  });
+});
 
-//     const data = {
-//       email: 'test@emai.com'
-//     };
-//     testData(data);
-//   });
-// });
+describe('When testing resetPassword()', () => {
 
-// describe('When testing resetPassword()', () => {
-//   let sdk: PracteraSDK;
+  it('should call login API resetPassword service with correct data', () => {
+    const data = {
+      password: '123456'
+    };
+    sdk.resetPassword(data);
+    expect(sdk['loginAPI'].resetPassword).toHaveBeenCalledWith(data);
+  });
 
-//   it('should throw error if loginApiUrl not provided in constructor', async () => {
-//     sdk = new PracteraSDK({apiKey: API_URL});
+  it('should call login API user service with correct data', async () => {
+    sdk['loginAPI'].resetPassword = jest.fn().mockResolvedValueOnce({
+      message: "operation successful"
+    });
+    const data = {
+      password: DUMMY_PASSWORD
+    };
+    await expect(sdk.resetPassword(data)).resolves.toEqual({
+      message: "operation successful"
+    });
+  });
 
-//     try {
-//       await sdk.resetPassword({ password: DUMMY_PASSWORD });
-//     } catch(error) {
-//       expect(error.message).toEqual(LOGIN_API_URL_WARNING);
-//     }
-//   });
+  it('should return error data if password compromised', async () => {
+    sdk['loginAPI'].resetPassword = jest.fn().mockRejectedValueOnce({
+      status: 400,
+      error: {passwordCompromised: true}
+    });
+    const data = {
+      password: DUMMY_PASSWORD
+    };
+    await expect(sdk.resetPassword(data)).rejects.toEqual({
+      status: 400,
+      error: {passwordCompromised: true}
+    });
+  });
+});
 
-//   it('should throw error if apiKey not provided in constructor', async () => {
-//     sdk = new PracteraSDK({loginApiUrl: API_URL});
+describe('mfaRegister()', () => {
 
-//     try {
-//       await sdk.resetPassword({ password: DUMMY_PASSWORD });
-//     } catch(error) {
-//       expect(error.message).toEqual(APIKEY_WARNING);
-//     }
-//   });
+  it('should call login API mfaRegister service with correct data', () => {
+    const data = {
+      countryCode: '+94',
+      number: '7348823'
+    };
+    sdk.mfaRegister(data);
+    expect(sdk['loginAPI'].mfaRegister).toHaveBeenCalledWith(data);
+  });
 
-//   it('should call user service with correct data', () => {
-//     sdk = new PracteraSDK({loginApiUrl: API_URL, apiKey: SAMPLE_APIKEY});
+  it('should call login API mfaRegister service with correct data', async () => {
+    sdk['loginAPI'].mfaRegister = jest.fn().mockResolvedValueOnce({
+      message: "operation successful"
+    });
+    const data = {
+      password: DUMMY_PASSWORD
+    };
+    await expect(sdk.mfaRegister(data)).resolves.toEqual({
+      message: "operation successful"
+    });
+  });
 
-//     spyOn(loginAPI,'resetPassword').and.returnValue(new Promise<void>((resolve, reject) => {
-//       resolve();
-//     }));
-//     const body = {
-//       password: DUMMY_PASSWORD
-//     };
-//     const data = {
-//       password: DUMMY_PASSWORD,
-//     };
-//     sdk.resetPassword(data);
-//     expect(loginAPI.resetPassword).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY, body);
-//   });
-
-//   it('should throw error if password is not provided', async () => {
-//     sdk = new PracteraSDK({loginApiUrl: API_URL, apiKey: SAMPLE_APIKEY});
-
-//     try {
-//       await sdk.resetPassword({
-//         password: ''
-//       });
-//     } catch (err) {
-//       expect(err.message).toEqual('Password cannot be empty.');
-//     }
-//   });
-// });
-
-// describe('verifyRegistration()', () => {
-//   let sdk: any;
-
-//   it('should throw error when coreApiUrl not provided in constructor', async () => {
-//     sdk = new PracteraSDK({});
-//     const data = {
-//       appkey: APP_KEY,
-//       email: TEST_EMAIL,
-//       key: 'test-key',
-//     };
-//     try {
-//       await sdk.verifyRegistration(data);
-//     } catch (error) {
-//       expect(error.message).toEqual(CORE_API_URL_WARNING);
-//     }
-//   });
-
-//   it('should throw error when apiKey not provided in constructor', async () => {
-//     sdk = new PracteraSDK({coreApiUrl: API_URL});
-//     const data = {
-//       appkey: APP_KEY,
-//       email: TEST_EMAIL,
-//       key: 'test-key',
-//     };
-//     try {
-//       await sdk.verifyRegistration(data);
-//     } catch (error) {
-//       expect(error.message).toEqual(APIKEY_WARNING);
-//     }
-//   });
-
-//   it('should throw error if provided parameters are wrong', async () => {
-//     sdk = new PracteraSDK({coreApiUrl: API_URL, apiKey: SAMPLE_APIKEY});
-
-//     const data = {
-//       appkey: APP_KEY,
-//       email: TEST_EMAIL,
-//       key: 'test-key',
-//     };
-//     try {
-//       await sdk.verifyRegistration(data);
-//     } catch (error) {
-//       expect(error.message).toEqual('Email & key values must not be empty');
-//     }
-//   });
-
-//   it('should call verify() from registration-service with correct data', () => {
-//     sdk = new PracteraSDK({coreApiUrl: API_URL, apiKey: SAMPLE_APIKEY});
-
-//     mocked(coreAPI.verify).mockImplementation((): Promise<any> => {
-//       return Promise.resolve(true);
-//     });
-
-//     const body = {
-//       email: TEST_EMAIL,
-//       key: 'test-key',
-//     };
-
-//     const data = {
-//       ...body,
-//       appkey: APP_KEY,
-//     };
-
-//     sdk.verifyRegistration(data);
-//     expect(coreAPI.verify).toHaveBeenCalledWith(API_URL, SAMPLE_APIKEY, data.appkey, body);
-//   });
-// });
+});
 
 // describe('register()', () => {
 //   let sdk: any;
