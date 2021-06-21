@@ -17,6 +17,7 @@ This is the sdk of practera. Practera SDK can call different endpoints of API UR
 - [API Calls](#api-calls)
     - [Login](#login)
     - [Forgot password](#forgot-password)
+    - [Direct login](#direct-login)
     - [Reset password](#reset-password)
     - [Account Registration/Activation](#account-registrationactivation)
     - [Account Registration Verification](#account-registration-verification)
@@ -140,6 +141,32 @@ let credentials = {
 }
 
 practeraSDK.login(credentials).then(
+    (response) => {
+        console.log('login success');
+    },
+    (error) => {
+        console.error('error');
+    }
+);
+```
+
+### Direct login
+
+Login service is calling `/login` endpoint of the API URL passed when SDK init. 
+To call login service as direct login need to pass apikey to the API.
+
+```ts
+import { PracteraSDK } from '@practera/practera-sdk';
+
+const practeraSDK = new PracteraSDK({
+  loginApiUrl: 'login api url'
+});
+
+let data = {
+   apikey: 'sample-apikey',
+}
+
+practeraSDK.directLogin(data).then(
     (response) => {
         console.log('login success');
     },
