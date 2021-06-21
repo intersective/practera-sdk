@@ -54,7 +54,7 @@ export function get(endpoint: string, httpOptions?: any): Promise<any> {
  * @param httpOptions Json object - Contains headers and URL parameters
  * @returns Promise
  */
-export function post(endpoint: string, data: any, httpOptions?: any): Promise<any> {
+export function post(endpoint: string, data?: any, httpOptions?: any): Promise<any> {
   const requestConfig = createRequestConfig(httpOptions);
   return Axios.post(endpoint, data, requestConfig);
 }
@@ -66,7 +66,7 @@ export function post(endpoint: string, data: any, httpOptions?: any): Promise<an
  * @param httpOptions Json object - Contains headers and URL parameters
  * @returns Promise
  */
-export function put(endpoint: string, data: any, httpOptions?: any): Promise<any> {
+export function put(endpoint: string, data?: any, httpOptions?: any): Promise<any> {
   const requestConfig = createRequestConfig(httpOptions);
   return Axios.put(endpoint, data, requestConfig);
 }

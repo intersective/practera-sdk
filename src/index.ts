@@ -1,7 +1,7 @@
-import LoginAPI, { LoginCredentials, ForgotPassword, ResetPassword, MFAVerify, MFARegister } from "./data-sources/login-api";
+import LoginAPI, { LoginCredentials, DirectLoginCredentials, ForgotPassword, ResetPassword, MFAVerify, MFARegister } from "./data-sources/login-api";
 import CoreAPI, { Registration, VerifyRegistration, ConfigParams } from './data-sources/core-api';
 
-interface ConstructorParams {
+export interface ConstructorParams {
   loginApiUrl?: string;
   coreApiUrl?: string;
   chatApiUrl?: string;
@@ -11,7 +11,7 @@ interface ConstructorParams {
   appkey?: string;
 }
 
-export class PracteraSDK {
+export default class PracteraSDK {
 
   // API Variables
   private loginAPI!: LoginAPI;
@@ -94,6 +94,19 @@ export class PracteraSDK {
 
   login(data: LoginCredentials): Promise<any> {
     return this.loginAPI.login(data);
+  }
+
+  /**
+   * this method will call login api to log in user with user credentials.
+   * @param {DirectLoginCredentials} data direct login credentials
+   * {
+   *  apikey: '123445',
+   * }
+   * @return {Promise<any>} axios promise respond
+   */
+
+  directLogin(data: DirectLoginCredentials): Promise<any> {
+    return this.loginAPI.directLogin(data);
   }
 
   /**

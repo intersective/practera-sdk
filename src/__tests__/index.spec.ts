@@ -2,7 +2,7 @@ import { mocked } from 'ts-jest/utils';
 import { DUMMY_PASSWORD, DUMMY_STACKS } from './mock-data';
 import LoginAPI from '../data-sources/login-api';
 import CoreAPI from '../data-sources/core-api';
-import { PracteraSDK } from '../index';
+import PracteraSDK from '../index';
 jest.mock('../data-sources/login-api.ts');
 jest.mock('../data-sources/core-api.ts');
 
