@@ -5,3 +5,6 @@ coverage/
 *.code-workspace
 /lib
 .sonarlint
+package-lock.json
+practera-sdk.sublime-project
+practera-sdk.sublime-workspace
