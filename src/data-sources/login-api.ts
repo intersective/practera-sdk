@@ -12,6 +12,10 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface DirectLoginCredentials {
+  apikey: string;
+}
+
 export interface ForgotPassword {
   email: string;
 }
@@ -55,6 +59,7 @@ const EMAIL_EMPTY_WARNING = 'Email can not be empty';
 const PASSWORD_EMPTY_WARNING = 'Password can not be empty';
 const COUNTRY_CODE_NUMBER_WARNING = 'Country code and phone number can not be empty';
 const MFA_VERIFY_WARNING = 'Verification code can not be empty';
+const DIRECT_LOGIN_WARNING = 'Direct login required user API KEY.';
 
 export default class LoginAPI {
 
@@ -87,7 +92,7 @@ export default class LoginAPI {
     if (params.apiKey && !isEmpty(params.apiKey)) {
       this.apiKey = params.apiKey;
     }
-    if (params.loginAppUrl &&!isEmpty(params.loginAppUrl)) {
+    if (params.loginAppUrl && !isEmpty(params.loginAppUrl)) {
       this.loginAppUrl = params.loginAppUrl;
     }
   }
@@ -114,6 +119,26 @@ export default class LoginAPI {
     }
     const fullUrl = urlFormatter(this.apiUrl, api.login);
     return post(fullUrl, data);
+  }
+
+  /**
+   * This method will call login api with apikey for direct login and will return promise
+   * @param {DirectLoginCredentials} data mandatory content required by endpoint
+   * @return {Promise<any>} axios promise respond
+   */
+  directLogin(data: DirectLoginCredentials): Promise<any> {
+    if (isEmpty(this.apiUrl)) {
+      throw new Error(LOGIN_API_URL_WARNING);
+    }
+    if (isEmpty(data.apikey)) {
+      throw new Error(DIRECT_LOGIN_WARNING);
+    }
+    const fullUrl = urlFormatter(this.apiUrl, api.login);
+    return post(fullUrl, {}, {
+      headers: {
+        apikey: data.apikey
+      }
+    });
   }
 
   /**

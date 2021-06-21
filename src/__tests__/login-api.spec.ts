@@ -15,6 +15,7 @@ describe('when testing login-api', () => {
   const PASSWORD_EMPTY_WARNING = 'Password can not be empty';
   const COUNTRY_CODE_NUMBER_WARNING = 'Country code and phone number can not be empty';
   const MFA_VERIFY_WARNING = 'Verification code can not be empty';
+  const DIRECT_LOGIN_WARNING = 'Direct login required user API KEY.';
 
   const API_URL = 'testAPI.com/';
   const APIKEY = 'apikey';
@@ -83,6 +84,41 @@ describe('when testing login-api', () => {
         });
       };
       expect(t).toThrow(USERNAME_PASS_WARNING);
+    });
+  });
+
+  describe('directLogin()', () => {
+
+    it('should throw errors login API URL is empty', () => {
+      loginAPI = new LoginAPI({ loginApiUrl: '', apiKey: APIKEY, loginAppUrl: LOGINAPPURL });
+      const t = () => {
+        loginAPI.directLogin({
+          apikey: '12345'
+        });
+      };
+      expect(t).toThrow(LOGIN_API_URL_WARNING);
+    });
+
+    it('should call request service with testAPi.com/login and data', () => {
+      const data = {
+        apikey: '12345'
+      };
+      loginAPI.directLogin(data);
+      expect(post).toHaveBeenCalledWith('https://testAPI.com/login', {}, {
+        headers: {
+          apikey: data.apikey
+        }
+      });
+    });
+
+    it('should throw error if apikey is empty', () => {
+      const data = {
+        apikey: ''
+      };
+      const t = () => {
+        loginAPI.directLogin(data);
+      };
+      expect(t).toThrow(DIRECT_LOGIN_WARNING);
     });
   });
 
